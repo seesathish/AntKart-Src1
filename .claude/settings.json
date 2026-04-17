@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "additionalDirectories": [
+      "c:\\Users\\seesa\\OneDrive\\Desktop\\AntCart\\AC.Products\\src\\AC.Products.Domain\\AC.Products.Domain\\Common",
+      "c:\\Users\\seesa\\OneDrive\\Desktop\\AntCart\\AC.Products\\src\\AC.Products.Application\\AC.Products.Application\\Interfaces",
+      "c:\\Users\\seesa\\OneDrive\\Desktop\\AntCart\\AC.Products\\src\\AC.Products.Domain\\AC.Products.Domain\\Enums",
+      "c:\\Users\\seesa\\OneDrive\\Desktop\\AntCart\\AC.Products\\src\\AC.Products.Domain\\AC.Products.Domain\\ValueObjects",
+      "c:\\Users\\seesa\\OneDrive\\Desktop\\AntCart\\AC.Products\\src\\AC.Products.Application\\AC.Products.Application\\DTOs",
+      "c:\\Users\\seesa\\OneDrive\\Desktop\\AntCart\\AC.Products\\src\\AC.Products.Domain\\AC.Products.Domain\\Specifications",
+      "c:\\Users\\seesa\\OneDrive\\Desktop\\AntCart\\AC.Products\\src\\AC.Products.Domain\\AC.Products.Domain\\Entities",
+      "c:\\Users\\seesa\\OneDrive\\Desktop\\AntCart\\AC.Products\\src\\AC.Products.Domain\\AC.Products.Domain\\Events",
+      "c:\\Users\\seesa\\OneDrive\\Desktop\\AntCart\\AC.Products\\src\\AC.Products.Domain\\AC.Products.Domain",
+      "c:\\Users\\seesa\\OneDrive\\Desktop\\AntCart\\AC.Products\\src\\AC.Products.Application\\AC.Products.Application\\Common",
+      "c:\\Users\\seesa\\OneDrive\\Desktop\\AntCart\\AC.Products\\src\\AC.Products.Application\\AC.Products.Application\\Validators",
+      "c:\\Users\\seesa\\OneDrive\\Desktop\\AntCart\\AC.Products\\src\\AC.Products.Application\\AC.Products.Application\\Behaviors",
+      "c:\\Users\\seesa\\OneDrive\\Desktop\\AntCart\\AC.Products\\src\\AC.Products.Application\\AC.Products.Application\\Commands\\CreateProduct",
+      "c:\\Users\\seesa\\OneDrive\\Desktop\\AntCart\\AC.Products\\src\\AC.Products.Application\\AC.Products.Application\\Commands\\UpdateProduct",
+      "c:\\Users\\seesa\\OneDrive\\Desktop\\AntCart\\AC.Products\\src\\AC.Products.Application\\AC.Products.Application\\Commands\\DeleteProduct",
+      "c:\\Users\\seesa\\OneDrive\\Desktop\\AntCart\\AC.Products\\src\\AC.Products.Application\\AC.Products.Application\\Commands\\BulkInsertProducts",
+      "c:\\Users\\seesa\\OneDrive\\Desktop\\AntCart\\AC.Products\\src\\AC.Products.Application\\AC.Products.Application\\Commands\\BulkUpdateProducts",
+      "c:\\Users\\seesa\\OneDrive\\Desktop\\AntCart\\AC.Products\\src\\AC.Products.Application\\AC.Products.Application\\Queries\\GetProductById",
+      "c:\\Users\\seesa\\OneDrive\\Desktop\\AntCart\\AC.Products\\src\\AC.Products.Application\\AC.Products.Application\\Queries\\GetProducts",
+      "c:\\Users\\seesa\\OneDrive\\Desktop\\AntCart\\AC.Products\\src\\AC.Products.Application\\AC.Products.Application\\Queries\\GetProductsByCategory",
+      "c:\\Users\\seesa\\OneDrive\\Desktop\\AntCart\\AC.Products\\src\\AC.Products.Application\\AC.Products.Application\\Extensions",
+      "c:\\Users\\seesa\\OneDrive\\Desktop\\AntCart\\AC.Products\\src\\AC.Products.Application\\AC.Products.Application"
+    ]
+  }
+}

@@ -2,26 +2,64 @@
 
 AntKart is a cloud-native e-commerce platform built as a collection of independently deployable microservices using .NET 9, Clean Architecture, and DDD principles.
 
+## Solution Structure
+
+```
+AntKart/
+├── AK.Products/                          # Product catalogue microservice
+│   ├── AK.Products.Domain/
+│   ├── AK.Products.Application/
+│   ├── AK.Products.Infrastructure/
+│   ├── AK.Products.API/
+│   ├── AK.Products.Tests/
+│   └── PRODUCTS_TECHNICAL_DESIGN.md
+├── AK.Discount/                          # Discount coupon microservice
+│   ├── AK.Discount.Domain/
+│   ├── AK.Discount.Application/
+│   ├── AK.Discount.Infrastructure/
+│   ├── AK.Discount.Grpc/
+│   ├── AK.Discount.Tests/
+│   └── DISCOUNT_TECHNICAL_DESIGN.md
+├── AK.BuildingBlocks/                    # Shared cross-cutting library
+│   └── AK.BuildingBlocks/
+├── AntKart.postman_collection.json       # Unified API collection (all services)
+├── docker-compose.yml
+├── docker-compose.override.yml
+└── nuget.config
+```
+
 ## Microservices
 
-| Service | Description | Transport | Database | Technical Design |
-|---------|-------------|-----------|----------|-----------------|
-| [AK.Products](src/AK.Products.API/AK.Products.API) | Product catalogue — Men, Women & Kids dress collections | REST / Minimal API | MongoDB | [Design Doc](TECHNICAL_DESIGN.md) |
-| [AK.Discount](src/AK.Discount.Grpc/AK.Discount.Grpc) | Discount coupon management for products | gRPC | SQLite | [Design Doc](DISCOUNT_TECHNICAL_DESIGN.md) |
+| Service | Transport | Database | Design Doc |
+|---------|-----------|----------|------------|
+| [AK.Products](AK.Products/AK.Products.API) | REST — Minimal API | MongoDB | [Products Design](AK.Products/PRODUCTS_TECHNICAL_DESIGN.md) |
+| [AK.Discount](AK.Discount/AK.Discount.Grpc) | gRPC | SQLite | [Discount Design](AK.Discount/DISCOUNT_TECHNICAL_DESIGN.md) |
 
 ## Shared Libraries
 
 | Library | Purpose |
 |---------|---------|
-| [AK.BuildingBlocks](src/AK.BuildingBlocks/AK.BuildingBlocks) | Cross-cutting concerns — Serilog logging, health checks, `PagedResult<T>`, `Result<T>`, base exceptions, correlation ID middleware |
+| [AK.BuildingBlocks](AK.BuildingBlocks/AK.BuildingBlocks) | Serilog logging, health checks, `PagedResult<T>`, `Result<T>`, base exceptions, correlation ID middleware |
+
+## API Testing
+
+Import **[AntKart.postman_collection.json](AntKart.postman_collection.json)** into Postman.
+
+| Collection Variable | Default Value | Description |
+|--------------------|---------------|-------------|
+| `productsUrl` | `http://localhost:5077` | Products REST API base URL |
+| `discountGrpc` | `localhost:5001` | Discount gRPC host |
+| `productId` | `replace-with-actual-id` | MongoDB ObjectId of a product |
+
+> **AK.Discount** is a gRPC service. The collection includes grpcurl commands as descriptions. For a native gRPC UI, use Postman's **New > gRPC Request** with the proto file at `AK.Discount/AK.Discount.Grpc/Protos/discount.proto`.
 
 ## Running Locally
 
 ### Prerequisites
 - .NET 9 SDK
-- Docker Desktop (for MongoDB and containerised runs)
+- Docker Desktop
 
-### Start all services with Docker Compose
+### All services via Docker Compose
 ```bash
 docker-compose up --build
 ```
@@ -31,23 +69,24 @@ docker-compose up --build
 | AK.Products REST API | http://localhost:8080 |
 | AK.Products Swagger UI | http://localhost:8080/swagger |
 | AK.Discount gRPC | http://localhost:8081 |
-| Health — Products | http://localhost:8080/health |
-| Health — Discount | http://localhost:8081/health |
+| Products Health | http://localhost:8080/health |
+| Discount Health | http://localhost:8081/health |
 
-### Start individual services (dev)
+### Individual services (dev)
 ```bash
-# Terminal 1 — Products API (port 5077)
-cd src/AK.Products.API/AK.Products.API
-dotnet run
+# Terminal 1 — Products API  →  http://localhost:5077/swagger
+cd AK.Products/AK.Products.API && dotnet run
 
-# Terminal 2 — Discount gRPC (port 5001)
-cd src/AK.Discount.Grpc/AK.Discount.Grpc
-dotnet run
+# Terminal 2 — Discount gRPC  →  localhost:5001
+cd AK.Discount/AK.Discount.Grpc && dotnet run
 ```
 
-## Running Tests
+## Tests
 ```bash
 dotnet test
 ```
-- AK.Products.Tests: 45 tests
-- AK.Discount.Tests: 11 tests
+| Project | Tests |
+|---------|-------|
+| AK.Products.Tests | 45 |
+| AK.Discount.Tests | 11 |
+| **Total** | **56** |

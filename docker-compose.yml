@@ -16,7 +16,7 @@ services:
     image: ak-products-api
     build:
       context: .
-      dockerfile: src/AK.Products.API/AK.Products.API/Dockerfile
+      dockerfile: AK.Products/AK.Products.API/Dockerfile
     container_name: ak-products-api
     restart: unless-stopped
     ports:
@@ -33,7 +33,7 @@ services:
     image: ak-discount-grpc
     build:
       context: .
-      dockerfile: src/AK.Discount.Grpc/AK.Discount.Grpc/Dockerfile
+      dockerfile: AK.Discount/AK.Discount.Grpc/Dockerfile
     container_name: ak-discount-grpc
     restart: unless-stopped
     ports:

@@ -24,9 +24,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\AK.Products.Application\AK.Products.Application\AK.Products.Application.csproj" />
-    <ProjectReference Include="..\..\..\src\AK.Products.Domain\AK.Products.Domain\AK.Products.Domain.csproj" />
-    <ProjectReference Include="..\..\..\src\AK.Products.Infrastructure\AK.Products.Infrastructure\AK.Products.Infrastructure.csproj" />
+    <ProjectReference Include="..\AK.Products.Application\AK.Products.Application.csproj" />
+    <ProjectReference Include="..\AK.Products.Domain\AK.Products.Domain.csproj" />
+    <ProjectReference Include="..\AK.Products.Infrastructure\AK.Products.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

@@ -26,9 +26,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\AK.Discount.Application\AK.Discount.Application\AK.Discount.Application.csproj" />
-    <ProjectReference Include="..\..\..\src\AK.Discount.Infrastructure\AK.Discount.Infrastructure\AK.Discount.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\..\src\AK.Discount.Domain\AK.Discount.Domain\AK.Discount.Domain.csproj" />
+    <ProjectReference Include="..\AK.Discount.Application\AK.Discount.Application.csproj" />
+    <ProjectReference Include="..\AK.Discount.Infrastructure\AK.Discount.Infrastructure.csproj" />
+    <ProjectReference Include="..\AK.Discount.Domain\AK.Discount.Domain.csproj" />
   </ItemGroup>
 
 </Project>

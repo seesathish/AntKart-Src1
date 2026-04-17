@@ -1,0 +1,425 @@
+{
+  "info": {
+    "_postman_id": "antkart-microservices-collection",
+    "name": "AntKart Microservices",
+    "description": "Unified Postman collection for all AntKart microservices.\n\n**Services:**\n- AK.Products REST API — http://localhost:5077\n- AK.Discount gRPC — localhost:5001 (use grpcurl or Postman gRPC tab)\n\n**Variables:**\n- `productsUrl` — Products API base URL\n- `discountGrpc` — Discount gRPC host\n- `productId` — Replace with actual MongoDB ObjectId after creating a product",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "productsUrl", "value": "http://localhost:5077", "type": "string" },
+    { "key": "discountGrpc", "value": "localhost:5001", "type": "string" },
+    { "key": "productId", "value": "replace-with-actual-id", "type": "string" },
+    { "key": "discountId", "value": "1", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "AK.Products API",
+      "description": "Product catalogue microservice — REST/HTTP on port 5077.\nSwagger UI: http://localhost:5077/swagger",
+      "item": [
+        {
+          "name": "Products — Read",
+          "item": [
+            {
+              "name": "GET All Products (Default Paging)",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{productsUrl}}/api/v1/products?page=1&pageSize=20",
+                  "host": ["{{productsUrl}}"],
+                  "path": ["api", "v1", "products"],
+                  "query": [
+                    { "key": "page", "value": "1" },
+                    { "key": "pageSize", "value": "20" }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "GET All Products (Page 2)",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{productsUrl}}/api/v1/products?page=2&pageSize=10",
+                  "host": ["{{productsUrl}}"],
+                  "path": ["api", "v1", "products"],
+                  "query": [
+                    { "key": "page", "value": "2" },
+                    { "key": "pageSize", "value": "10" }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "GET Product by ID",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{productsUrl}}/api/v1/products/{{productId}}",
+                  "host": ["{{productsUrl}}"],
+                  "path": ["api", "v1", "products", "{{productId}}"]
+                }
+              }
+            },
+            {
+              "name": "GET Men's Products",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{productsUrl}}/api/v1/products/men",
+                  "host": ["{{productsUrl}}"],
+                  "path": ["api", "v1", "products", "men"]
+                }
+              }
+            },
+            {
+              "name": "GET Women's Products",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{productsUrl}}/api/v1/products/women",
+                  "host": ["{{productsUrl}}"],
+                  "path": ["api", "v1", "products", "women"]
+                }
+              }
+            },
+            {
+              "name": "GET Kids' Products",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{productsUrl}}/api/v1/products/kids",
+                  "host": ["{{productsUrl}}"],
+                  "path": ["api", "v1", "products", "kids"]
+                }
+              }
+            },
+            {
+              "name": "GET Featured Products",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{productsUrl}}/api/v1/products/featured",
+                  "host": ["{{productsUrl}}"],
+                  "path": ["api", "v1", "products", "featured"]
+                }
+              }
+            },
+            {
+              "name": "GET Products by Category (Shirts)",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{productsUrl}}/api/v1/products/category/Shirts",
+                  "host": ["{{productsUrl}}"],
+                  "path": ["api", "v1", "products", "category", "Shirts"]
+                }
+              }
+            },
+            {
+              "name": "GET Products by Category (Dresses)",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{productsUrl}}/api/v1/products/category/Dresses",
+                  "host": ["{{productsUrl}}"],
+                  "path": ["api", "v1", "products", "category", "Dresses"]
+                }
+              }
+            },
+            {
+              "name": "GET Products — Filter by Gender (Men)",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{productsUrl}}/api/v1/products?gender=1&page=1&pageSize=20",
+                  "host": ["{{productsUrl}}"],
+                  "path": ["api", "v1", "products"],
+                  "query": [
+                    { "key": "gender", "value": "1" },
+                    { "key": "page", "value": "1" },
+                    { "key": "pageSize", "value": "20" }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "GET Products — Filter by Gender (Women)",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{productsUrl}}/api/v1/products?gender=2&page=1&pageSize=20",
+                  "host": ["{{productsUrl}}"],
+                  "path": ["api", "v1", "products"],
+                  "query": [
+                    { "key": "gender", "value": "2" },
+                    { "key": "page", "value": "1" },
+                    { "key": "pageSize", "value": "20" }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "GET Products — Filter by Gender (Kids)",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{productsUrl}}/api/v1/products?gender=3&page=1&pageSize=20",
+                  "host": ["{{productsUrl}}"],
+                  "path": ["api", "v1", "products"],
+                  "query": [
+                    { "key": "gender", "value": "3" },
+                    { "key": "page", "value": "1" },
+                    { "key": "pageSize", "value": "20" }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "GET Products — Search by Keyword",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{productsUrl}}/api/v1/products?search=shirt&page=1&pageSize=20",
+                  "host": ["{{productsUrl}}"],
+                  "path": ["api", "v1", "products"],
+                  "query": [
+                    { "key": "search", "value": "shirt" },
+                    { "key": "page", "value": "1" },
+                    { "key": "pageSize", "value": "20" }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "GET Products — Health Check",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{productsUrl}}/health",
+                  "host": ["{{productsUrl}}"],
+                  "path": ["health"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Products — Write",
+          "item": [
+            {
+              "name": "POST Create Product (Men)",
+              "request": {
+                "method": "POST",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Men's Premium Oxford Shirt\",\n  \"description\": \"A premium quality Oxford shirt for men made with 100% cotton.\",\n  \"sku\": \"MEN-OXF-NEW-001\",\n  \"brand\": \"ArrowMen\",\n  \"gender\": 1,\n  \"categoryName\": \"Shirts\",\n  \"price\": 1299.99,\n  \"currency\": \"USD\",\n  \"stockQuantity\": 50,\n  \"sizes\": [\"S\", \"M\", \"L\", \"XL\"],\n  \"colors\": [\"White\", \"Blue\", \"Grey\"],\n  \"material\": \"Cotton\"\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{productsUrl}}/api/v1/products",
+                  "host": ["{{productsUrl}}"],
+                  "path": ["api", "v1", "products"]
+                }
+              }
+            },
+            {
+              "name": "POST Create Product (Women)",
+              "request": {
+                "method": "POST",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Women's Floral Maxi Dress\",\n  \"description\": \"Elegant floral maxi dress crafted from premium chiffon fabric.\",\n  \"sku\": \"WOM-FLOR-NEW-001\",\n  \"brand\": \"Biba\",\n  \"gender\": 2,\n  \"categoryName\": \"Dresses\",\n  \"price\": 2499.99,\n  \"currency\": \"USD\",\n  \"stockQuantity\": 30,\n  \"sizes\": [\"XS\", \"S\", \"M\", \"L\"],\n  \"colors\": [\"Rose Pink\", \"Ivory\"],\n  \"material\": \"Chiffon\"\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{productsUrl}}/api/v1/products",
+                  "host": ["{{productsUrl}}"],
+                  "path": ["api", "v1", "products"]
+                }
+              }
+            },
+            {
+              "name": "POST Create Product (Kids)",
+              "request": {
+                "method": "POST",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Kids Superhero Printed Tee\",\n  \"description\": \"Fun superhero printed t-shirt for kids.\",\n  \"sku\": \"KID-HERO-NEW-001\",\n  \"brand\": \"H&M Kids\",\n  \"gender\": 3,\n  \"categoryName\": \"T-Shirts\",\n  \"price\": 499.99,\n  \"currency\": \"USD\",\n  \"stockQuantity\": 100,\n  \"sizes\": [\"4-5Y\", \"5-6Y\", \"6-7Y\"],\n  \"colors\": [\"Red\", \"Blue\"],\n  \"material\": \"Soft Cotton\"\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{productsUrl}}/api/v1/products",
+                  "host": ["{{productsUrl}}"],
+                  "path": ["api", "v1", "products"]
+                }
+              }
+            },
+            {
+              "name": "PUT Update Product",
+              "request": {
+                "method": "PUT",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Men's Premium Oxford Shirt — Updated\",\n  \"description\": \"Updated description with new fabric.\",\n  \"brand\": \"ArrowMen\",\n  \"price\": 1499.99,\n  \"stockQuantity\": 75,\n  \"material\": \"Egyptian Cotton\"\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{productsUrl}}/api/v1/products/{{productId}}",
+                  "host": ["{{productsUrl}}"],
+                  "path": ["api", "v1", "products", "{{productId}}"]
+                }
+              }
+            },
+            {
+              "name": "DELETE Product",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{productsUrl}}/api/v1/products/{{productId}}",
+                  "host": ["{{productsUrl}}"],
+                  "path": ["api", "v1", "products", "{{productId}}"]
+                }
+              }
+            },
+            {
+              "name": "POST Bulk Insert Products",
+              "request": {
+                "method": "POST",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\n  {\n    \"name\": \"Women's Silk Evening Dress\",\n    \"description\": \"Elegant silk evening dress.\",\n    \"sku\": \"WOM-SILK-BULK-001\",\n    \"brand\": \"Biba\",\n    \"gender\": 2,\n    \"categoryName\": \"Dresses\",\n    \"price\": 3999.99,\n    \"currency\": \"USD\",\n    \"stockQuantity\": 20,\n    \"sizes\": [\"XS\", \"S\", \"M\"],\n    \"colors\": [\"Burgundy\"],\n    \"material\": \"Silk\"\n  },\n  {\n    \"name\": \"Men's Slim Fit Chinos\",\n    \"description\": \"Classic slim fit chinos.\",\n    \"sku\": \"MEN-CHIN-BULK-001\",\n    \"brand\": \"Wrangler\",\n    \"gender\": 1,\n    \"categoryName\": \"Trousers\",\n    \"price\": 1799.99,\n    \"currency\": \"USD\",\n    \"stockQuantity\": 60,\n    \"sizes\": [\"30x32\", \"32x32\", \"34x32\"],\n    \"colors\": [\"Khaki\", \"Navy\"],\n    \"material\": \"Cotton Twill\"\n  }\n]",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{productsUrl}}/api/v1/products/bulk-insert",
+                  "host": ["{{productsUrl}}"],
+                  "path": ["api", "v1", "products", "bulk-insert"]
+                }
+              }
+            },
+            {
+              "name": "PUT Bulk Update Products",
+              "request": {
+                "method": "PUT",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\n  {\n    \"id\": \"{{productId}}\",\n    \"data\": {\n      \"name\": \"Bulk Updated Name\",\n      \"description\": \"Updated via bulk operation\",\n      \"brand\": \"UpdatedBrand\",\n      \"price\": 999.99,\n      \"stockQuantity\": 50,\n      \"material\": \"Premium Cotton\"\n    }\n  }\n]",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{productsUrl}}/api/v1/products/bulk-update",
+                  "host": ["{{productsUrl}}"],
+                  "path": ["api", "v1", "products", "bulk-update"]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "AK.Discount gRPC",
+      "description": "Discount coupon microservice — gRPC on port 5001.\n\nPostman supports gRPC via the gRPC request type (New > gRPC Request).\nServer reflection URL: http://localhost:5001\nProto file: AK.Discount/AK.Discount.Grpc/Protos/discount.proto\n\nAlternatively use grpcurl:\n  grpcurl -plaintext localhost:5001 list\n  grpcurl -plaintext localhost:5001 discount.DiscountProtoService/GetAllDiscounts\n\nHealth check: GET http://localhost:5001/health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://{{discountGrpc}}/health",
+              "host": ["http://{{discountGrpc}}"],
+              "path": ["health"]
+            }
+          }
+        },
+        {
+          "name": "grpcurl — Get All Discounts (copy & run in terminal)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "Run this in your terminal:\n\ngrpcurl -plaintext -d '{\"page\":1,\"page_size\":10}' {{discountGrpc}} discount.DiscountProtoService/GetAllDiscounts",
+            "url": {
+              "raw": "http://{{discountGrpc}}/",
+              "host": ["http://{{discountGrpc}}"],
+              "path": [""]
+            }
+          }
+        },
+        {
+          "name": "grpcurl — Get Discount by Product ID (copy & run in terminal)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "Run this in your terminal:\n\ngrpcurl -plaintext -d '{\"product_id\":\"MEN-SHIR-001\"}' {{discountGrpc}} discount.DiscountProtoService/GetDiscount",
+            "url": {
+              "raw": "http://{{discountGrpc}}/",
+              "host": ["http://{{discountGrpc}}"],
+              "path": [""]
+            }
+          }
+        },
+        {
+          "name": "grpcurl — Create Discount (copy & run in terminal)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "Run this in your terminal:\n\ngrpcurl -plaintext -d '{\n  \"coupon\": {\n    \"product_id\": \"MEN-SHIR-099\",\n    \"product_name\": \"Test Shirt\",\n    \"coupon_code\": \"SUMMER25\",\n    \"description\": \"Summer sale 25% off\",\n    \"amount\": 25.0,\n    \"discount_type\": \"Percentage\",\n    \"valid_from\": \"2026-04-01T00:00:00Z\",\n    \"valid_to\": \"2026-08-31T23:59:59Z\",\n    \"minimum_quantity\": 1\n  }\n}' {{discountGrpc}} discount.DiscountProtoService/CreateDiscount",
+            "url": {
+              "raw": "http://{{discountGrpc}}/",
+              "host": ["http://{{discountGrpc}}"],
+              "path": [""]
+            }
+          }
+        },
+        {
+          "name": "grpcurl — Update Discount (copy & run in terminal)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "Run this in your terminal (replace id with actual discount ID):\n\ngrpcurl -plaintext -d '{\n  \"id\": 1,\n  \"coupon\": {\n    \"product_name\": \"Updated Shirt\",\n    \"description\": \"Updated discount\",\n    \"amount\": 30.0,\n    \"discount_type\": \"Percentage\",\n    \"valid_from\": \"2026-04-01T00:00:00Z\",\n    \"valid_to\": \"2026-12-31T23:59:59Z\",\n    \"is_active\": true,\n    \"minimum_quantity\": 1\n  }\n}' {{discountGrpc}} discount.DiscountProtoService/UpdateDiscount",
+            "url": {
+              "raw": "http://{{discountGrpc}}/",
+              "host": ["http://{{discountGrpc}}"],
+              "path": [""]
+            }
+          }
+        },
+        {
+          "name": "grpcurl — Delete Discount (copy & run in terminal)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "Run this in your terminal (replace id with actual discount ID):\n\ngrpcurl -plaintext -d '{\"id\": 1}' {{discountGrpc}} discount.DiscountProtoService/DeleteDiscount",
+            "url": {
+              "raw": "http://{{discountGrpc}}/",
+              "host": ["http://{{discountGrpc}}"],
+              "path": [""]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
