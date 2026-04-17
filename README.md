@@ -87,6 +87,6 @@ dotnet test
 ```
 | Project | Tests |
 |---------|-------|
-| AK.Products.Tests | 45 |
-| AK.Discount.Tests | 11 |
-| **Total** | **56** |
+| AK.Products.Tests | 165 |
+| AK.Discount.Tests | 51 |
+| **Total** | **216** |
