@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: antcart-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: AKProductsDb
+
+  ak-products-api:
+    image: ak-products-api
+    build:
+      context: .
+      dockerfile: src/AK.Products.API/AK.Products.API/Dockerfile
+    container_name: ak-products-api
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - MongoDbSettings__ConnectionString=mongodb://mongodb:27017
+      - MongoDbSettings__DatabaseName=AKProductsDb
+      - MongoDbSettings__ProductsCollection=Products
+    depends_on:
+      - mongodb
+
+  ak-discount-grpc:
+    image: ak-discount-grpc
+    build:
+      context: .
+      dockerfile: src/AK.Discount.Grpc/AK.Discount.Grpc/Dockerfile
+    container_name: ak-discount-grpc
+    restart: unless-stopped
+    ports:
+      - "8081:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DiscountDb=Data Source=/app/data/discount.db
+    volumes:
+      - discount_data:/app/data
+    depends_on:
+      - mongodb
+
+volumes:
+  mongodb_data:
+  discount_data:

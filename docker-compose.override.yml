@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  mongodb:
+    ports:
+      - "27017:27017"
+
+  ak-products-api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "5077:8080"
+
+  ak-discount-grpc:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "5001:8080"
