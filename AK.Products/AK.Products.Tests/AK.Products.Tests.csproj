@@ -27,6 +27,7 @@
     <ProjectReference Include="..\AK.Products.Application\AK.Products.Application.csproj" />
     <ProjectReference Include="..\AK.Products.Domain\AK.Products.Domain.csproj" />
     <ProjectReference Include="..\AK.Products.Infrastructure\AK.Products.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\AK.BuildingBlocks\AK.BuildingBlocks\AK.BuildingBlocks.csproj" />
   </ItemGroup>
 
 </Project>
