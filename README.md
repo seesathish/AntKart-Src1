@@ -27,6 +27,13 @@ AntKart/
 │   ├── AK.ShoppingCart.API/
 │   ├── AK.ShoppingCart.Tests/
 │   └── SHOPPING_CART_TECHNICAL_DESIGN.md
+├── AK.Order/                             # Order management microservice
+│   ├── AK.Order.Domain/
+│   ├── AK.Order.Application/
+│   ├── AK.Order.Infrastructure/
+│   ├── AK.Order.API/
+│   ├── AK.Order.Tests/
+│   └── ORDER_TECHNICAL_DESIGN.md
 ├── AK.BuildingBlocks/                    # Shared cross-cutting library
 │   └── AK.BuildingBlocks/
 ├── AntKart.postman_collection.json       # Unified API collection (all services)
@@ -42,6 +49,7 @@ AntKart/
 | [AK.Products](AK.Products/AK.Products.API) | REST — Minimal API | MongoDB | [Products Design](AK.Products/PRODUCTS_TECHNICAL_DESIGN.md) |
 | [AK.Discount](AK.Discount/AK.Discount.Grpc) | gRPC | SQLite | [Discount Design](AK.Discount/DISCOUNT_TECHNICAL_DESIGN.md) |
 | [AK.ShoppingCart](AK.ShoppingCart/AK.ShoppingCart.API) | REST — Minimal API | Redis | [ShoppingCart Design](AK.ShoppingCart/SHOPPING_CART_TECHNICAL_DESIGN.md) |
+| [AK.Order](AK.Order/AK.Order.API) | REST — Minimal API | PostgreSQL | [Order Design](AK.Order/ORDER_TECHNICAL_DESIGN.md) |
 
 ## Shared Libraries
 
@@ -59,6 +67,7 @@ Import **[AntKart.postman_collection.json](AntKart.postman_collection.json)** in
 | `discountGrpc` | `localhost:5001` | Discount gRPC host |
 | `cartUrl` | `http://localhost:5079` | ShoppingCart REST API base URL |
 | `productId` | `replace-with-actual-id` | MongoDB ObjectId of a product |
+| `orderUrl` | `http://localhost:5080` | Order REST API base URL |
 
 > **AK.Discount** is a gRPC service. The collection includes grpcurl commands as descriptions. For a native gRPC UI, use Postman's **New > gRPC Request** with the proto file at `AK.Discount/AK.Discount.Grpc/Protos/discount.proto`.
 
@@ -80,9 +89,12 @@ docker-compose up --build
 | AK.Discount gRPC | http://localhost:8081 |
 | AK.ShoppingCart REST API | http://localhost:8082 |
 | AK.ShoppingCart Swagger UI | http://localhost:8082/swagger |
+| AK.Order REST API | http://localhost:8083 |
+| AK.Order Swagger UI | http://localhost:8083/swagger |
 | Products Health | http://localhost:8080/health |
 | Discount Health | http://localhost:8081/health |
 | ShoppingCart Health | http://localhost:8082/health |
+| Order Health | http://localhost:8083/health |
 
 ### Individual services (dev)
 ```bash
@@ -94,6 +106,9 @@ cd AK.Discount/AK.Discount.Grpc && dotnet run
 
 # Terminal 3 — ShoppingCart API  →  http://localhost:5079/swagger  (requires Redis)
 cd AK.ShoppingCart/AK.ShoppingCart.API && dotnet run
+
+# Terminal 4 — Order API  →  http://localhost:5080/swagger  (requires PostgreSQL)
+cd AK.Order/AK.Order.API && dotnet run
 ```
 
 ## Tests
@@ -105,4 +120,5 @@ dotnet test
 | AK.Products.Tests | 179 |
 | AK.Discount.Tests | 53 |
 | AK.ShoppingCart.Tests | 88 |
-| **Total** | **320** |
+| AK.Order.Tests | 106 |
+| **Total** | **426** |

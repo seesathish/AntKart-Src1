@@ -16,6 +16,8 @@ AntKart is a cloud-native e-commerce platform built as independently deployable 
 AntKart/
 ├── AK.Products/          REST Minimal API — product catalogue (MongoDB)
 ├── AK.Discount/          gRPC service — discount coupons (SQLite)
+├── AK.ShoppingCart/      REST Minimal API — shopping cart (Redis)
+├── AK.Order/             REST Minimal API — order management (PostgreSQL)
 ├── AK.BuildingBlocks/    Shared cross-cutting library (no business logic)
 ├── AntKart.sln
 ├── AntKart.postman_collection.json
@@ -74,6 +76,18 @@ AK.<Service>/
 - **Tests:** 88 passing (domain, commands, queries, validators, behaviors, infrastructure)
 - **Swagger:** `http://localhost:5079/swagger`
 - **Design doc:** [AK.ShoppingCart/SHOPPING_CART_TECHNICAL_DESIGN.md](AK.ShoppingCart/SHOPPING_CART_TECHNICAL_DESIGN.md)
+
+### ✅ AK.Order  (REST Minimal API)
+- **Transport:** HTTP REST, port 5080 (dev) / 8083 (Docker)
+- **Database:** PostgreSQL — `AKOrdersDb` via EF Core 9 + Npgsql, code-first migrations
+- **Architecture:** Vertical Slice Clean Architecture (features organised by slice in Application layer)
+- **Patterns:** CQRS (MediatR 12.4.1), FluentValidation pipeline, Specification, Repository, Unit of Work
+- **Operations:** Create order, get order by ID, list orders (paged, filtered), list by user, update status, cancel
+- **Order number format:** `ORD-{yyyyMMdd}-{8-char-GUID-uppercase}` e.g. `ORD-20260418-A1B2C3D4`
+- **Domain events:** `OrderCreatedEvent`, `OrderStatusChangedEvent`, `OrderCancelledEvent`
+- **Tests:** 106 passing (domain, features, validators, behaviors, infrastructure with EF InMemory)
+- **Swagger:** `http://localhost:5080/swagger`
+- **Design doc:** [AK.Order/ORDER_TECHNICAL_DESIGN.md](AK.Order/ORDER_TECHNICAL_DESIGN.md)
 
 ### ✅ AK.BuildingBlocks  (Shared Library)
 - `Common/PagedResult<T>`, `Result<T>`

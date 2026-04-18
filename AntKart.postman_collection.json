@@ -6,13 +6,51 @@
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
-    { "key": "productsUrl", "value": "http://localhost:5077", "type": "string" },
-    { "key": "discountGrpc", "value": "localhost:5001", "type": "string" },
-    { "key": "cartUrl", "value": "http://localhost:5079", "type": "string" },
-    { "key": "productId", "value": "replace-with-actual-id", "type": "string" },
-    { "key": "discountId", "value": "1", "type": "string" },
-    { "key": "cartUserId", "value": "user-001", "type": "string" },
-    { "key": "cartProductId", "value": "replace-with-product-id", "type": "string" }
+    {
+      "key": "productsUrl",
+      "value": "http://localhost:5077",
+      "type": "string"
+    },
+    {
+      "key": "discountGrpc",
+      "value": "localhost:5001",
+      "type": "string"
+    },
+    {
+      "key": "cartUrl",
+      "value": "http://localhost:5079",
+      "type": "string"
+    },
+    {
+      "key": "productId",
+      "value": "replace-with-actual-id",
+      "type": "string"
+    },
+    {
+      "key": "discountId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "cartUserId",
+      "value": "user-001",
+      "type": "string"
+    },
+    {
+      "key": "cartProductId",
+      "value": "replace-with-product-id",
+      "type": "string"
+    },
+    {
+      "key": "orderUrl",
+      "value": "http://localhost:5080",
+      "type": "string"
+    },
+    {
+      "key": "orderId",
+      "value": "",
+      "type": "string"
+    }
   ],
   "item": [
     {
@@ -29,11 +67,23 @@
                 "header": [],
                 "url": {
                   "raw": "{{productsUrl}}/api/v1/products?page=1&pageSize=20",
-                  "host": ["{{productsUrl}}"],
-                  "path": ["api", "v1", "products"],
+                  "host": [
+                    "{{productsUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "products"
+                  ],
                   "query": [
-                    { "key": "page", "value": "1" },
-                    { "key": "pageSize", "value": "20" }
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "pageSize",
+                      "value": "20"
+                    }
                   ]
                 }
               }
@@ -45,11 +95,23 @@
                 "header": [],
                 "url": {
                   "raw": "{{productsUrl}}/api/v1/products?page=2&pageSize=10",
-                  "host": ["{{productsUrl}}"],
-                  "path": ["api", "v1", "products"],
+                  "host": [
+                    "{{productsUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "products"
+                  ],
                   "query": [
-                    { "key": "page", "value": "2" },
-                    { "key": "pageSize", "value": "10" }
+                    {
+                      "key": "page",
+                      "value": "2"
+                    },
+                    {
+                      "key": "pageSize",
+                      "value": "10"
+                    }
                   ]
                 }
               }
@@ -61,8 +123,15 @@
                 "header": [],
                 "url": {
                   "raw": "{{productsUrl}}/api/v1/products/{{productId}}",
-                  "host": ["{{productsUrl}}"],
-                  "path": ["api", "v1", "products", "{{productId}}"]
+                  "host": [
+                    "{{productsUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "products",
+                    "{{productId}}"
+                  ]
                 }
               }
             },
@@ -73,8 +142,15 @@
                 "header": [],
                 "url": {
                   "raw": "{{productsUrl}}/api/v1/products/men",
-                  "host": ["{{productsUrl}}"],
-                  "path": ["api", "v1", "products", "men"]
+                  "host": [
+                    "{{productsUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "products",
+                    "men"
+                  ]
                 }
               }
             },
@@ -85,8 +161,15 @@
                 "header": [],
                 "url": {
                   "raw": "{{productsUrl}}/api/v1/products/women",
-                  "host": ["{{productsUrl}}"],
-                  "path": ["api", "v1", "products", "women"]
+                  "host": [
+                    "{{productsUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "products",
+                    "women"
+                  ]
                 }
               }
             },
@@ -97,8 +180,15 @@
                 "header": [],
                 "url": {
                   "raw": "{{productsUrl}}/api/v1/products/kids",
-                  "host": ["{{productsUrl}}"],
-                  "path": ["api", "v1", "products", "kids"]
+                  "host": [
+                    "{{productsUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "products",
+                    "kids"
+                  ]
                 }
               }
             },
@@ -109,8 +199,15 @@
                 "header": [],
                 "url": {
                   "raw": "{{productsUrl}}/api/v1/products/featured",
-                  "host": ["{{productsUrl}}"],
-                  "path": ["api", "v1", "products", "featured"]
+                  "host": [
+                    "{{productsUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "products",
+                    "featured"
+                  ]
                 }
               }
             },
@@ -121,8 +218,16 @@
                 "header": [],
                 "url": {
                   "raw": "{{productsUrl}}/api/v1/products/category/Shirts",
-                  "host": ["{{productsUrl}}"],
-                  "path": ["api", "v1", "products", "category", "Shirts"]
+                  "host": [
+                    "{{productsUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "products",
+                    "category",
+                    "Shirts"
+                  ]
                 }
               }
             },
@@ -133,8 +238,16 @@
                 "header": [],
                 "url": {
                   "raw": "{{productsUrl}}/api/v1/products/category/Dresses",
-                  "host": ["{{productsUrl}}"],
-                  "path": ["api", "v1", "products", "category", "Dresses"]
+                  "host": [
+                    "{{productsUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "products",
+                    "category",
+                    "Dresses"
+                  ]
                 }
               }
             },
@@ -145,12 +258,27 @@
                 "header": [],
                 "url": {
                   "raw": "{{productsUrl}}/api/v1/products?gender=1&page=1&pageSize=20",
-                  "host": ["{{productsUrl}}"],
-                  "path": ["api", "v1", "products"],
+                  "host": [
+                    "{{productsUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "products"
+                  ],
                   "query": [
-                    { "key": "gender", "value": "1" },
-                    { "key": "page", "value": "1" },
-                    { "key": "pageSize", "value": "20" }
+                    {
+                      "key": "gender",
+                      "value": "1"
+                    },
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "pageSize",
+                      "value": "20"
+                    }
                   ]
                 }
               }
@@ -162,12 +290,27 @@
                 "header": [],
                 "url": {
                   "raw": "{{productsUrl}}/api/v1/products?gender=2&page=1&pageSize=20",
-                  "host": ["{{productsUrl}}"],
-                  "path": ["api", "v1", "products"],
+                  "host": [
+                    "{{productsUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "products"
+                  ],
                   "query": [
-                    { "key": "gender", "value": "2" },
-                    { "key": "page", "value": "1" },
-                    { "key": "pageSize", "value": "20" }
+                    {
+                      "key": "gender",
+                      "value": "2"
+                    },
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "pageSize",
+                      "value": "20"
+                    }
                   ]
                 }
               }
@@ -179,12 +322,27 @@
                 "header": [],
                 "url": {
                   "raw": "{{productsUrl}}/api/v1/products?gender=3&page=1&pageSize=20",
-                  "host": ["{{productsUrl}}"],
-                  "path": ["api", "v1", "products"],
+                  "host": [
+                    "{{productsUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "products"
+                  ],
                   "query": [
-                    { "key": "gender", "value": "3" },
-                    { "key": "page", "value": "1" },
-                    { "key": "pageSize", "value": "20" }
+                    {
+                      "key": "gender",
+                      "value": "3"
+                    },
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "pageSize",
+                      "value": "20"
+                    }
                   ]
                 }
               }
@@ -196,12 +354,27 @@
                 "header": [],
                 "url": {
                   "raw": "{{productsUrl}}/api/v1/products?search=shirt&page=1&pageSize=20",
-                  "host": ["{{productsUrl}}"],
-                  "path": ["api", "v1", "products"],
+                  "host": [
+                    "{{productsUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "products"
+                  ],
                   "query": [
-                    { "key": "search", "value": "shirt" },
-                    { "key": "page", "value": "1" },
-                    { "key": "pageSize", "value": "20" }
+                    {
+                      "key": "search",
+                      "value": "shirt"
+                    },
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "pageSize",
+                      "value": "20"
+                    }
                   ]
                 }
               }
@@ -213,8 +386,12 @@
                 "header": [],
                 "url": {
                   "raw": "{{productsUrl}}/health",
-                  "host": ["{{productsUrl}}"],
-                  "path": ["health"]
+                  "host": [
+                    "{{productsUrl}}"
+                  ],
+                  "path": [
+                    "health"
+                  ]
                 }
               }
             }
@@ -227,16 +404,31 @@
               "name": "POST Create Product (Men)",
               "request": {
                 "method": "POST",
-                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
                 "body": {
                   "mode": "raw",
                   "raw": "{\n  \"name\": \"Men's Premium Oxford Shirt\",\n  \"description\": \"A premium quality Oxford shirt for men made with 100% cotton.\",\n  \"sku\": \"MEN-OXF-NEW-001\",\n  \"brand\": \"ArrowMen\",\n  \"gender\": 1,\n  \"categoryName\": \"Shirts\",\n  \"price\": 1299.99,\n  \"currency\": \"USD\",\n  \"stockQuantity\": 50,\n  \"sizes\": [\"S\", \"M\", \"L\", \"XL\"],\n  \"colors\": [\"White\", \"Blue\", \"Grey\"],\n  \"material\": \"Cotton\"\n}",
-                  "options": { "raw": { "language": "json" } }
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
                 },
                 "url": {
                   "raw": "{{productsUrl}}/api/v1/products",
-                  "host": ["{{productsUrl}}"],
-                  "path": ["api", "v1", "products"]
+                  "host": [
+                    "{{productsUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "products"
+                  ]
                 }
               }
             },
@@ -244,16 +436,31 @@
               "name": "POST Create Product (Women)",
               "request": {
                 "method": "POST",
-                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
                 "body": {
                   "mode": "raw",
                   "raw": "{\n  \"name\": \"Women's Floral Maxi Dress\",\n  \"description\": \"Elegant floral maxi dress crafted from premium chiffon fabric.\",\n  \"sku\": \"WOM-FLOR-NEW-001\",\n  \"brand\": \"Biba\",\n  \"gender\": 2,\n  \"categoryName\": \"Dresses\",\n  \"price\": 2499.99,\n  \"currency\": \"USD\",\n  \"stockQuantity\": 30,\n  \"sizes\": [\"XS\", \"S\", \"M\", \"L\"],\n  \"colors\": [\"Rose Pink\", \"Ivory\"],\n  \"material\": \"Chiffon\"\n}",
-                  "options": { "raw": { "language": "json" } }
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
                 },
                 "url": {
                   "raw": "{{productsUrl}}/api/v1/products",
-                  "host": ["{{productsUrl}}"],
-                  "path": ["api", "v1", "products"]
+                  "host": [
+                    "{{productsUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "products"
+                  ]
                 }
               }
             },
@@ -261,16 +468,31 @@
               "name": "POST Create Product (Kids)",
               "request": {
                 "method": "POST",
-                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
                 "body": {
                   "mode": "raw",
                   "raw": "{\n  \"name\": \"Kids Superhero Printed Tee\",\n  \"description\": \"Fun superhero printed t-shirt for kids.\",\n  \"sku\": \"KID-HERO-NEW-001\",\n  \"brand\": \"H&M Kids\",\n  \"gender\": 3,\n  \"categoryName\": \"T-Shirts\",\n  \"price\": 499.99,\n  \"currency\": \"USD\",\n  \"stockQuantity\": 100,\n  \"sizes\": [\"4-5Y\", \"5-6Y\", \"6-7Y\"],\n  \"colors\": [\"Red\", \"Blue\"],\n  \"material\": \"Soft Cotton\"\n}",
-                  "options": { "raw": { "language": "json" } }
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
                 },
                 "url": {
                   "raw": "{{productsUrl}}/api/v1/products",
-                  "host": ["{{productsUrl}}"],
-                  "path": ["api", "v1", "products"]
+                  "host": [
+                    "{{productsUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "products"
+                  ]
                 }
               }
             },
@@ -278,16 +500,32 @@
               "name": "PUT Update Product",
               "request": {
                 "method": "PUT",
-                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
                 "body": {
                   "mode": "raw",
                   "raw": "{\n  \"name\": \"Men's Premium Oxford Shirt — Updated\",\n  \"description\": \"Updated description with new fabric.\",\n  \"brand\": \"ArrowMen\",\n  \"price\": 1499.99,\n  \"stockQuantity\": 75,\n  \"material\": \"Egyptian Cotton\"\n}",
-                  "options": { "raw": { "language": "json" } }
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
                 },
                 "url": {
                   "raw": "{{productsUrl}}/api/v1/products/{{productId}}",
-                  "host": ["{{productsUrl}}"],
-                  "path": ["api", "v1", "products", "{{productId}}"]
+                  "host": [
+                    "{{productsUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "products",
+                    "{{productId}}"
+                  ]
                 }
               }
             },
@@ -298,8 +536,15 @@
                 "header": [],
                 "url": {
                   "raw": "{{productsUrl}}/api/v1/products/{{productId}}",
-                  "host": ["{{productsUrl}}"],
-                  "path": ["api", "v1", "products", "{{productId}}"]
+                  "host": [
+                    "{{productsUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "products",
+                    "{{productId}}"
+                  ]
                 }
               }
             },
@@ -307,16 +552,32 @@
               "name": "POST Bulk Insert Products",
               "request": {
                 "method": "POST",
-                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
                 "body": {
                   "mode": "raw",
                   "raw": "[\n  {\n    \"name\": \"Women's Silk Evening Dress\",\n    \"description\": \"Elegant silk evening dress.\",\n    \"sku\": \"WOM-SILK-BULK-001\",\n    \"brand\": \"Biba\",\n    \"gender\": 2,\n    \"categoryName\": \"Dresses\",\n    \"price\": 3999.99,\n    \"currency\": \"USD\",\n    \"stockQuantity\": 20,\n    \"sizes\": [\"XS\", \"S\", \"M\"],\n    \"colors\": [\"Burgundy\"],\n    \"material\": \"Silk\"\n  },\n  {\n    \"name\": \"Men's Slim Fit Chinos\",\n    \"description\": \"Classic slim fit chinos.\",\n    \"sku\": \"MEN-CHIN-BULK-001\",\n    \"brand\": \"Wrangler\",\n    \"gender\": 1,\n    \"categoryName\": \"Trousers\",\n    \"price\": 1799.99,\n    \"currency\": \"USD\",\n    \"stockQuantity\": 60,\n    \"sizes\": [\"30x32\", \"32x32\", \"34x32\"],\n    \"colors\": [\"Khaki\", \"Navy\"],\n    \"material\": \"Cotton Twill\"\n  }\n]",
-                  "options": { "raw": { "language": "json" } }
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
                 },
                 "url": {
                   "raw": "{{productsUrl}}/api/v1/products/bulk-insert",
-                  "host": ["{{productsUrl}}"],
-                  "path": ["api", "v1", "products", "bulk-insert"]
+                  "host": [
+                    "{{productsUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "products",
+                    "bulk-insert"
+                  ]
                 }
               }
             },
@@ -324,16 +585,32 @@
               "name": "PUT Bulk Update Products",
               "request": {
                 "method": "PUT",
-                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
                 "body": {
                   "mode": "raw",
                   "raw": "[\n  {\n    \"id\": \"{{productId}}\",\n    \"data\": {\n      \"name\": \"Bulk Updated Name\",\n      \"description\": \"Updated via bulk operation\",\n      \"brand\": \"UpdatedBrand\",\n      \"price\": 999.99,\n      \"stockQuantity\": 50,\n      \"material\": \"Premium Cotton\"\n    }\n  }\n]",
-                  "options": { "raw": { "language": "json" } }
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
                 },
                 "url": {
                   "raw": "{{productsUrl}}/api/v1/products/bulk-update",
-                  "host": ["{{productsUrl}}"],
-                  "path": ["api", "v1", "products", "bulk-update"]
+                  "host": [
+                    "{{productsUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "products",
+                    "bulk-update"
+                  ]
                 }
               }
             }
@@ -352,8 +629,12 @@
             "header": [],
             "url": {
               "raw": "http://{{discountGrpc}}/health",
-              "host": ["{{discountGrpc}}"],
-              "path": ["health"]
+              "host": [
+                "{{discountGrpc}}"
+              ],
+              "path": [
+                "health"
+              ]
             }
           }
         },
@@ -365,8 +646,12 @@
             "description": "Run this in your terminal:\n\ngrpcurl -plaintext -d '{\"page\":1,\"page_size\":10}' {{discountGrpc}} discount.DiscountProtoService/GetAllDiscounts",
             "url": {
               "raw": "http://{{discountGrpc}}/",
-              "host": ["http://{{discountGrpc}}"],
-              "path": [""]
+              "host": [
+                "http://{{discountGrpc}}"
+              ],
+              "path": [
+                ""
+              ]
             }
           }
         },
@@ -378,8 +663,12 @@
             "description": "Run this in your terminal:\n\ngrpcurl -plaintext -d '{\"product_id\":\"MEN-SHIR-001\"}' {{discountGrpc}} discount.DiscountProtoService/GetDiscount",
             "url": {
               "raw": "http://{{discountGrpc}}/",
-              "host": ["http://{{discountGrpc}}"],
-              "path": [""]
+              "host": [
+                "http://{{discountGrpc}}"
+              ],
+              "path": [
+                ""
+              ]
             }
           }
         },
@@ -391,8 +680,12 @@
             "description": "Run this in your terminal:\n\ngrpcurl -plaintext -d '{\n  \"coupon\": {\n    \"product_id\": \"MEN-SHIR-099\",\n    \"product_name\": \"Test Shirt\",\n    \"coupon_code\": \"SUMMER25\",\n    \"description\": \"Summer sale 25% off\",\n    \"amount\": 25.0,\n    \"discount_type\": \"Percentage\",\n    \"valid_from\": \"2026-04-01T00:00:00Z\",\n    \"valid_to\": \"2026-08-31T23:59:59Z\",\n    \"minimum_quantity\": 1\n  }\n}' {{discountGrpc}} discount.DiscountProtoService/CreateDiscount",
             "url": {
               "raw": "http://{{discountGrpc}}/",
-              "host": ["http://{{discountGrpc}}"],
-              "path": [""]
+              "host": [
+                "http://{{discountGrpc}}"
+              ],
+              "path": [
+                ""
+              ]
             }
           }
         },
@@ -404,8 +697,12 @@
             "description": "Run this in your terminal (replace id with actual discount ID):\n\ngrpcurl -plaintext -d '{\n  \"id\": 1,\n  \"coupon\": {\n    \"product_name\": \"Updated Shirt\",\n    \"description\": \"Updated discount\",\n    \"amount\": 30.0,\n    \"discount_type\": \"Percentage\",\n    \"valid_from\": \"2026-04-01T00:00:00Z\",\n    \"valid_to\": \"2026-12-31T23:59:59Z\",\n    \"is_active\": true,\n    \"minimum_quantity\": 1\n  }\n}' {{discountGrpc}} discount.DiscountProtoService/UpdateDiscount",
             "url": {
               "raw": "http://{{discountGrpc}}/",
-              "host": ["http://{{discountGrpc}}"],
-              "path": [""]
+              "host": [
+                "http://{{discountGrpc}}"
+              ],
+              "path": [
+                ""
+              ]
             }
           }
         },
@@ -417,14 +714,17 @@
             "description": "Run this in your terminal (replace id with actual discount ID):\n\ngrpcurl -plaintext -d '{\"id\": 1}' {{discountGrpc}} discount.DiscountProtoService/DeleteDiscount",
             "url": {
               "raw": "http://{{discountGrpc}}/",
-              "host": ["http://{{discountGrpc}}"],
-              "path": [""]
+              "host": [
+                "http://{{discountGrpc}}"
+              ],
+              "path": [
+                ""
+              ]
             }
           }
         }
       ]
-    }
-  ,
+    },
     {
       "name": "AK.ShoppingCart API",
       "description": "Shopping cart microservice — REST/HTTP on port 5079.\nSwagger UI: http://localhost:5079/swagger\nRedis-backed cart with 30-day TTL.",
@@ -436,8 +736,15 @@
             "header": [],
             "url": {
               "raw": "{{cartUrl}}/api/v1/cart/{{cartUserId}}",
-              "host": ["{{cartUrl}}"],
-              "path": ["api", "v1", "cart", "{{cartUserId}}"]
+              "host": [
+                "{{cartUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "cart",
+                "{{cartUserId}}"
+              ]
             }
           }
         },
@@ -445,15 +752,28 @@
           "name": "POST Add Item to Cart",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"productId\": \"{{cartProductId}}\",\n  \"productName\": \"Men's Classic Shirt\",\n  \"sku\": \"MEN-SHRT-001\",\n  \"price\": 999.99,\n  \"quantity\": 2,\n  \"imageUrl\": null\n}"
             },
             "url": {
               "raw": "{{cartUrl}}/api/v1/cart/{{cartUserId}}/items",
-              "host": ["{{cartUrl}}"],
-              "path": ["api", "v1", "cart", "{{cartUserId}}", "items"]
+              "host": [
+                "{{cartUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "cart",
+                "{{cartUserId}}",
+                "items"
+              ]
             }
           }
         },
@@ -461,15 +781,29 @@
           "name": "PUT Update Cart Item Quantity",
           "request": {
             "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"quantity\": 5\n}"
             },
             "url": {
               "raw": "{{cartUrl}}/api/v1/cart/{{cartUserId}}/items/{{cartProductId}}",
-              "host": ["{{cartUrl}}"],
-              "path": ["api", "v1", "cart", "{{cartUserId}}", "items", "{{cartProductId}}"]
+              "host": [
+                "{{cartUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "cart",
+                "{{cartUserId}}",
+                "items",
+                "{{cartProductId}}"
+              ]
             }
           }
         },
@@ -480,8 +814,17 @@
             "header": [],
             "url": {
               "raw": "{{cartUrl}}/api/v1/cart/{{cartUserId}}/items/{{cartProductId}}",
-              "host": ["{{cartUrl}}"],
-              "path": ["api", "v1", "cart", "{{cartUserId}}", "items", "{{cartProductId}}"]
+              "host": [
+                "{{cartUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "cart",
+                "{{cartUserId}}",
+                "items",
+                "{{cartProductId}}"
+              ]
             }
           }
         },
@@ -492,8 +835,15 @@
             "header": [],
             "url": {
               "raw": "{{cartUrl}}/api/v1/cart/{{cartUserId}}",
-              "host": ["{{cartUrl}}"],
-              "path": ["api", "v1", "cart", "{{cartUserId}}"]
+              "host": [
+                "{{cartUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "cart",
+                "{{cartUserId}}"
+              ]
             }
           }
         },
@@ -504,8 +854,179 @@
             "header": [],
             "url": {
               "raw": "{{cartUrl}}/health",
-              "host": ["{{cartUrl}}"],
-              "path": ["health"]
+              "host": [
+                "{{cartUrl}}"
+              ],
+              "path": [
+                "health"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "AK.Order API",
+      "item": [
+        {
+          "name": "Get All Orders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{orderUrl}}/api/orders?page=1&pageSize=20",
+              "host": [
+                "{{orderUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "20"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Orders by User",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{orderUrl}}/api/orders/user/user-123?page=1&pageSize=20",
+              "host": [
+                "{{orderUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "user",
+                "user-123"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "20"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Order by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{orderUrl}}/api/orders/{{orderId}}",
+              "host": [
+                "{{orderUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "{{orderId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"user-123\",\n  \"order\": {\n    \"items\": [\n      {\n        \"productId\": \"prod-001\",\n        \"productName\": \"Test Product\",\n        \"sku\": \"MEN-SHIR-001\",\n        \"price\": 29.99,\n        \"quantity\": 2,\n        \"imageUrl\": null\n      }\n    ],\n    \"shippingAddress\": {\n      \"fullName\": \"John Doe\",\n      \"addressLine1\": \"123 Main St\",\n      \"addressLine2\": null,\n      \"city\": \"Springfield\",\n      \"state\": \"IL\",\n      \"postalCode\": \"62701\",\n      \"country\": \"US\",\n      \"phone\": \"+1-555-0100\"\n    },\n    \"notes\": \"Please handle with care\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{orderUrl}}/api/orders",
+              "host": [
+                "{{orderUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Order Status",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"newStatus\": 1\n}"
+            },
+            "url": {
+              "raw": "{{orderUrl}}/api/orders/{{orderId}}/status",
+              "host": [
+                "{{orderUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "{{orderId}}",
+                "status"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Cancel Order",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{orderUrl}}/api/orders/{{orderId}}",
+              "host": [
+                "{{orderUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "{{orderId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{orderUrl}}/health",
+              "host": [
+                "{{orderUrl}}"
+              ],
+              "path": [
+                "health"
+              ]
             }
           }
         }

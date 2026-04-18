@@ -22,3 +22,13 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
     ports:
       - "5079:8080"
+
+  postgres:
+    ports:
+      - "5432:5432"
+
+  ak-order-api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "5080:8080"

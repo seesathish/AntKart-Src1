@@ -70,6 +70,35 @@ services:
     depends_on:
       - redis
 
+  postgres:
+    image: postgres:16-alpine
+    container_name: antcart-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: AKOrdersDb
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  ak-order-api:
+    image: ak-order-api
+    build:
+      context: .
+      dockerfile: AK.Order/AK.Order.API/Dockerfile
+    container_name: ak-order-api
+    restart: unless-stopped
+    ports:
+      - "8083:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__Postgres: "Host=postgres;Port=5432;Database=AKOrdersDb;Username=postgres;Password=postgres"
+    depends_on:
+      - postgres
+
 volumes:
   mongodb_data:
   discount_data:
+  postgres_data:
