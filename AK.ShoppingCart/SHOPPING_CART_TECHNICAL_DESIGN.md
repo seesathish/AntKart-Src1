@@ -102,7 +102,7 @@
 ## 4. High-Level Architecture
 
 ```mermaid
-%%{init: {'theme': 'base'}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#888888', 'edgeLabelBackground': '#00000000'}}}%%
 graph TB
     CLIENT["Client / API Gateway"]:::ext
     API["AK.ShoppingCart.API\nMinimal API · :5079\nEndpoints · ExceptionHandler · Swagger"]:::api
@@ -130,7 +130,7 @@ graph TB
 ### Layer Dependencies
 
 ```mermaid
-%%{init: {'theme': 'base'}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#888888', 'edgeLabelBackground': '#00000000'}}}%%
 graph TB
     API["API Layer"]:::api
     APP["Application Layer"]:::app
@@ -263,7 +263,7 @@ AK.ShoppingCart/
 `Cart` is the single aggregate root. All state changes go through its public methods — no direct property setters are exposed outside the class.
 
 ```mermaid
-%%{init: {'theme': 'base'}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#888888', 'edgeLabelBackground': '#00000000'}}}%%
 classDiagram
     class Cart {
         +string UserId
@@ -399,7 +399,7 @@ All events are `public sealed record` types. They are cleared via `Cart.ClearDom
 ### 7.3 MediatR Pipeline
 
 ```mermaid
-%%{init: {'theme': 'base'}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#888888', 'edgeLabelBackground': '#00000000'}}}%%
 sequenceDiagram
     participant Client
     participant Endpoint as CartEndpoints
@@ -718,7 +718,7 @@ The following are derived at read time and never persisted to Redis:
 ## 11. CQRS & MediatR Pipeline
 
 ```mermaid
-%%{init: {'theme': 'base'}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#888888', 'edgeLabelBackground': '#00000000'}}}%%
 sequenceDiagram
     participant Endpoint
     participant VB as ValidationBehavior
@@ -770,7 +770,7 @@ Rather than mapping Redis hashes or sorted sets to domain objects, cart state is
 ### Serialisation Boundary
 
 ```mermaid
-%%{init: {'theme': 'base'}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#888888', 'edgeLabelBackground': '#00000000'}}}%%
 sequenceDiagram
     participant Domain as Domain\n(Cart / CartItem)
     participant Snapshot as CartSnapshot /\nCartItemSnapshot
@@ -798,7 +798,7 @@ Every `SaveAsync` call sets the key TTL to `CartExpiryDays` days from `UtcNow`. 
 The Unit of Work provides a consistent interface for data access regardless of the underlying store:
 
 ```mermaid
-%%{init: {'theme': 'base'}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#888888', 'edgeLabelBackground': '#00000000'}}}%%
 sequenceDiagram
     participant Handler
     participant UoW as IUnitOfWork
@@ -912,7 +912,7 @@ Available in both Development and Production environments.
 ### Test Pyramid
 
 ```mermaid
-%%{init: {'theme': 'base'}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#888888', 'edgeLabelBackground': '#00000000'}}}%%
 graph TB
     E2E["Integration / E2E Tests\n(Future — requires running Redis)"]:::ext
     UNIT["Unit Tests\n88 tests\n(XUnit + Moq)"]:::app

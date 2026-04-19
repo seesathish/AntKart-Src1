@@ -101,7 +101,7 @@
 ## 4. High-Level Architecture
 
 ```mermaid
-%%{init: {'theme': 'base'}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#888888', 'edgeLabelBackground': '#00000000'}}}%%
 graph TB
     classDef api fill:#4A90D9,stroke:#2471A3,color:#fff
     classDef app fill:#27AE60,stroke:#1E8449,color:#fff
@@ -127,7 +127,7 @@ graph TB
 ### Layer Dependencies
 
 ```mermaid
-%%{init: {'theme': 'base'}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#888888', 'edgeLabelBackground': '#00000000'}}}%%
 graph LR
     classDef api fill:#4A90D9,stroke:#2471A3,color:#fff
     classDef app fill:#27AE60,stroke:#1E8449,color:#fff
@@ -263,7 +263,7 @@ AK.Products/
 `Product` is the single aggregate root. All state changes go through its public methods — no direct property setters are exposed.
 
 ```mermaid
-%%{init: {'theme': 'base'}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#888888', 'edgeLabelBackground': '#00000000'}}}%%
 classDiagram
     classDef domain fill:#E67E22,stroke:#D35400,color:#fff
     classDef infra fill:#8E44AD,stroke:#6C3483,color:#fff
@@ -383,7 +383,7 @@ Events implement `IDomainEvent : INotification` — compatible with MediatR's `I
 ### 7.3 MediatR Pipeline
 
 ```mermaid
-%%{init: {'theme': 'base'}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#888888', 'edgeLabelBackground': '#00000000'}}}%%
 sequenceDiagram
     participant C as Client
     participant E as Endpoint
@@ -578,7 +578,7 @@ All endpoints are grouped under `/api/v1/products` with OpenAPI metadata.
 ## 11. CQRS & MediatR Pipeline
 
 ```mermaid
-%%{init: {'theme': 'base'}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#888888', 'edgeLabelBackground': '#00000000'}}}%%
 graph TB
     classDef app fill:#27AE60,stroke:#1E8449,color:#fff
     classDef infra fill:#8E44AD,stroke:#6C3483,color:#fff
@@ -630,7 +630,7 @@ The repository's `ListAsync(spec)` translates the specification into MongoDB LIN
 The Unit of Work wraps the repository and provides a transaction boundary abstraction:
 
 ```mermaid
-%%{init: {'theme': 'base'}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#888888', 'edgeLabelBackground': '#00000000'}}}%%
 graph LR
     classDef app fill:#27AE60,stroke:#1E8449,color:#fff
     classDef infra fill:#8E44AD,stroke:#6C3483,color:#fff
@@ -700,7 +700,7 @@ PUT    /api/v1/products/bulk-update  → 200 { updated: N }
 ### Test Pyramid
 
 ```mermaid
-%%{init: {'theme': 'base'}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#888888', 'edgeLabelBackground': '#00000000'}}}%%
 graph TB
     classDef future fill:#E74C3C,stroke:#C0392B,color:#fff
     classDef current fill:#27AE60,stroke:#1E8449,color:#fff

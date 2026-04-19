@@ -74,7 +74,7 @@
 ## 4. High-Level Architecture
 
 ```mermaid
-%%{init: {'theme': 'base'}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#888888', 'edgeLabelBackground': '#00000000'}}}%%
 graph TB
     classDef api fill:#4A90D9,stroke:#2471A3,color:#fff
     classDef app fill:#27AE60,stroke:#1E8449,color:#fff
@@ -219,7 +219,7 @@ The Domain layer is deliberately thin — it contains the entity and its support
 ### 7.1 Coupon Entity
 
 ```mermaid
-%%{init: {'theme': 'base'}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#888888', 'edgeLabelBackground': '#00000000'}}}%%
 classDiagram
     classDef domain fill:#E67E22,stroke:#D35400,color:#fff
 
@@ -327,7 +327,7 @@ public interface ICouponRepository
 ### 9.1 EF Core Configuration (DiscountContext)
 
 ```mermaid
-%%{init: {'theme': 'base'}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#888888', 'edgeLabelBackground': '#00000000'}}}%%
 classDiagram
     classDef infra fill:#8E44AD,stroke:#6C3483,color:#fff
     classDef db fill:#2C3E50,stroke:#1A252F,color:#fff
@@ -446,7 +446,7 @@ Maps `CouponDto` → `CouponModel` (the Protobuf message). `ValidFrom`/`ValidTo`
 ## 12. CQRS & MediatR Pipeline
 
 ```mermaid
-%%{init: {'theme': 'base'}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#888888', 'edgeLabelBackground': '#00000000'}}}%%
 graph TB
     classDef api fill:#4A90D9,stroke:#2471A3,color:#fff
     classDef app fill:#27AE60,stroke:#1E8449,color:#fff
@@ -470,7 +470,7 @@ graph TB
 ### Request Lifecycle (CreateDiscount example)
 
 ```mermaid
-%%{init: {'theme': 'base'}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#888888', 'edgeLabelBackground': '#00000000'}}}%%
 sequenceDiagram
     participant C as gRPC Client
     participant I as ExceptionInterceptor

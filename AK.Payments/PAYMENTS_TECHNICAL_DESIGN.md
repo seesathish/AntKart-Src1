@@ -15,7 +15,7 @@ AK.Payments is the payment processing microservice for AntKart. It integrates wi
 ## Architecture
 
 ```mermaid
-%%{init: {'theme': 'base'}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#888888', 'edgeLabelBackground': '#00000000'}}}%%
 graph TB
     API["AK.Payments.API\nMinimal API Endpoints\nPayments · SavedCards"]:::api
     APP["AK.Payments.Application\nCommands · Queries\nInterfaces · DTOs · Validators"]:::app
@@ -101,7 +101,7 @@ graph TB
 ### Domain Class Diagram
 
 ```mermaid
-%%{init: {'theme': 'base'}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#888888', 'edgeLabelBackground': '#00000000'}}}%%
 classDiagram
     class Payment {
         +Guid Id
@@ -164,7 +164,7 @@ classDiagram
 ### Standard Card Payment
 
 ```mermaid
-%%{init: {'theme': 'base'}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#888888', 'edgeLabelBackground': '#00000000'}}}%%
 sequenceDiagram
     participant OC as OrderConfirmedConsumer
     participant C as Client
@@ -208,7 +208,7 @@ sequenceDiagram
 ### Saved Card Flow
 
 ```mermaid
-%%{init: {'theme': 'base'}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#888888', 'edgeLabelBackground': '#00000000'}}}%%
 sequenceDiagram
     participant C as Client
     participant P as AK.Payments.API
@@ -242,7 +242,7 @@ sequenceDiagram
 ## Payment Status Lifecycle
 
 ```mermaid
-%%{init: {'theme': 'base'}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#888888', 'edgeLabelBackground': '#00000000'}}}%%
 stateDiagram-v2
     [*] --> Pending : Payment.Create()
     Pending --> Initiated : Payment.Initiate(razorpayOrderId)\nRazorpay order assigned

@@ -104,7 +104,7 @@ The gateway circuit breaker is independent from the downstream service's own res
 ## Resilience Architecture
 
 ```mermaid
-%%{init: {'theme': 'base'}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#888888', 'edgeLabelBackground': '#00000000'}}}%%
 flowchart TD
     classDef svc fill:#4A90D9,stroke:#2471A3,color:#fff
     classDef policy fill:#E67E22,stroke:#D35400,color:#fff

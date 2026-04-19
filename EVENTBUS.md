@@ -9,7 +9,7 @@ Async communication between microservices uses **MassTransit 8.3.6** with **Rabb
 ## Event Flow
 
 ```mermaid
-%%{init: {'theme': 'base'}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#888888', 'edgeLabelBackground': '#00000000'}}}%%
 flowchart TD
     classDef service fill:#4A90D9,stroke:#2471A3,color:#fff
     classDef event fill:#3498DB,stroke:#2471A3,color:#fff
@@ -85,7 +85,7 @@ Location: `AK.Order/AK.Order.Application/Sagas/OrderSaga.cs`
 > The saga runs entirely within the **AK.Order** service, persisted to PostgreSQL via EF Core.
 
 ```mermaid
-%%{init: {'theme': 'base'}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#888888', 'edgeLabelBackground': '#00000000'}}}%%
 stateDiagram-v2
     classDef sagaState fill:#E67E22,stroke:#D35400,color:#fff,font-weight:bold
 
@@ -105,7 +105,7 @@ stateDiagram-v2
 ## Payment Event Flow
 
 ```mermaid
-%%{init: {'theme': 'base'}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#888888', 'edgeLabelBackground': '#00000000'}}}%%
 sequenceDiagram
     participant C as Client
     participant P as AK.Payments

@@ -9,7 +9,7 @@
 ## Architecture
 
 ```mermaid
-%%{init: {'theme': 'base'}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#888888', 'edgeLabelBackground': '#00000000'}}}%%
 graph TB
     API["AK.UserIdentity.API\nAuthEndpoints · AdminEndpoints"]:::api
 
@@ -163,7 +163,7 @@ The realm is auto-imported from `keycloak/antkart-realm.json` on Keycloak contai
 ## Authentication Flow
 
 ```mermaid
-%%{init: {'theme': 'base'}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#888888', 'edgeLabelBackground': '#00000000'}}}%%
 sequenceDiagram
     participant C as Client
     participant UI as AK.UserIdentity
@@ -226,7 +226,7 @@ Every protected service validates the JWT using `AK.BuildingBlocks.Authenticatio
 ### Role — Endpoint Access
 
 ```mermaid
-%%{init: {'theme': 'base'}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#888888', 'edgeLabelBackground': '#00000000'}}}%%
 graph LR
     ANON["Anonymous"]:::ext
     USER["Role: user"]:::app
@@ -393,7 +393,7 @@ UserIdentity API: `http://localhost:8084/swagger`
 ### Login Flow
 
 ```mermaid
-%%{init: {'theme': 'base'}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#888888', 'edgeLabelBackground': '#00000000'}}}%%
 sequenceDiagram
     participant F as Frontend
     participant UI as AK.UserIdentity
@@ -409,7 +409,7 @@ sequenceDiagram
 ### Protected Resource Access
 
 ```mermaid
-%%{init: {'theme': 'base'}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#888888', 'edgeLabelBackground': '#00000000'}}}%%
 sequenceDiagram
     participant F as Frontend
     participant GW as AK.Gateway
@@ -426,7 +426,7 @@ sequenceDiagram
 ### Admin-Only Operation
 
 ```mermaid
-%%{init: {'theme': 'base'}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#888888', 'edgeLabelBackground': '#00000000'}}}%%
 sequenceDiagram
     participant A as Admin Client
     participant GW as AK.Gateway

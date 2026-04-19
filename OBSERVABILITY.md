@@ -33,7 +33,7 @@ All AntKart services emit structured JSON logs via **Serilog**, shipped to **Ela
 ## Log Flow
 
 ```mermaid
-%%{init: {'theme': 'base'}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#888888', 'edgeLabelBackground': '#00000000'}}}%%
 flowchart LR
     classDef svc fill:#4A90D9,stroke:#2471A3,color:#fff
     classDef infra fill:#F39C12,stroke:#D68910,color:#fff

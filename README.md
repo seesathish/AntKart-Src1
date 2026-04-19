@@ -71,7 +71,7 @@ graph LR
 ### Diagram 2 — Order + Payment Event Flow (SAGA)
 
 ```mermaid
-%%{init: {'theme': 'base'}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#888888', 'edgeLabelBackground': '#00000000'}}}%%
 flowchart TD
     classDef event fill:#3498DB,stroke:#2471A3,color:#fff,rx:8
     classDef service fill:#2ECC71,stroke:#1E8449,color:#fff

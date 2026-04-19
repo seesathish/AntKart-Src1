@@ -68,7 +68,7 @@
 ## 4. Architecture
 
 ```mermaid
-%%{init: {'theme': 'base'}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#888888', 'edgeLabelBackground': '#00000000'}}}%%
 graph TB
     API["🌐 AK.Order.API\nMinimal API · :5080\nCRUD + Status + Cancel"]:::api
     APP["⚙️ AK.Order.Application\nVertical Slice CQRS · SAGA Consumers\nPaymentSucceeded/Failed consumers"]:::app
@@ -264,7 +264,7 @@ public enum PaymentStatus { Pending, Paid, Failed, Refunded }
 **Order Status Lifecycle:**
 
 ```mermaid
-%%{init: {'theme': 'base'}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#888888', 'edgeLabelBackground': '#00000000'}}}%%
 stateDiagram-v2
     [*] --> Pending : POST /api/orders
     Pending --> Confirmed : SAGA — StockReserved
@@ -284,7 +284,7 @@ stateDiagram-v2
 **SAGA Choreography (AK.Order ↔ AK.Products ↔ AK.Payments):**
 
 ```mermaid
-%%{init: {'theme': 'base'}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#888888', 'edgeLabelBackground': '#00000000'}}}%%
 stateDiagram-v2
     [*] --> StockPending : OrderCreatedIntegrationEvent\n(CreateOrderCommandHandler publishes via Outbox)
     StockPending --> Confirmed : StockReservedIntegrationEvent\n→ SAGA publishes OrderConfirmedIntegrationEvent

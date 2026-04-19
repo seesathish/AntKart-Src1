@@ -297,7 +297,7 @@ All should return `200`.
 ### Sad-Path SAGA Flow
 
 ```mermaid
-%%{init: {'theme': 'base'}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#888888', 'edgeLabelBackground': '#00000000'}}}%%
 flowchart TD
     classDef ok fill:#27AE60,stroke:#1E8449,color:#fff
     classDef fail fill:#E74C3C,stroke:#C0392B,color:#fff
