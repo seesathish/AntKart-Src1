@@ -11,9 +11,12 @@ public static class PaymentTestDataFactory
     public static Payment CreatePayment(
         Guid? orderId = null,
         string? userId = null,
+        string customerEmail = "user1@test.com",
+        string customerName = "Test User",
+        string orderNumber = "ORD-20260425-TESTTEST",
         decimal amount = 999.00m,
         PaymentMethod method = PaymentMethod.Card)
-        => Payment.Create(orderId ?? OrderId1, userId ?? UserId1, amount, method);
+        => Payment.Create(orderId ?? OrderId1, userId ?? UserId1, customerEmail, customerName, orderNumber, amount, method);
 
     public static SavedCard CreateSavedCard(string? userId = null)
         => SavedCard.Create(

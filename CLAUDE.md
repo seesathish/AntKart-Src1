@@ -21,8 +21,9 @@ AntKart/
 ├── AK.UserIdentity/      REST Minimal API — Keycloak identity proxy
 ├── AK.Gateway/           API Gateway — Ocelot single entry point
 ├── AK.Payments/          REST Minimal API — payment processing (PostgreSQL + Razorpay)
+├── AK.Notification/      REST Minimal API — transactional notifications (PostgreSQL + Mailhog/SMTP)
 ├── AK.BuildingBlocks/    Shared cross-cutting library (no business logic)
-├── AK.IntegrationTests/  SAGA + event bus tests (no API/Grpc dependency)
+├── AK.IntegrationTests/  SAGA + event bus + notification consumer tests (no API/Grpc dependency)
 ├── AntKart.sln
 ├── AntKart.postman_collection.json
 ├── docker-compose.yml
@@ -98,7 +99,7 @@ AK.<Service>/
 - **Order number format:** `ORD-{yyyyMMdd}-{8-char-GUID-uppercase}` e.g. `ORD-20260418-A1B2C3D4`
 - **Domain events:** `OrderCreatedEvent`, `OrderStatusChangedEvent`, `OrderCancelledEvent`
 - **Order status state machine:** `_allowedTransitions` dictionary enforces valid transitions — Pending→Confirmed|Cancelled|PaymentFailed, Confirmed→Processing|Shipped|Cancelled, Processing→Shipped|Cancelled, Shipped→Delivered, Delivered/Cancelled are terminal (no further transitions). `UpdateStatus()` throws `InvalidOperationException` for invalid transitions.
-- **Tests:** 106 passing (domain, features, validators, behaviors, infrastructure with EF InMemory)
+- **Tests:** 109 passing (domain, features, validators, behaviors, infrastructure with EF InMemory)
 - **Swagger:** `http://localhost:5080/swagger` (Development only)
 - **Design doc:** [AK.Order/ORDER_TECHNICAL_DESIGN.md](AK.Order/ORDER_TECHNICAL_DESIGN.md)
 
@@ -109,7 +110,7 @@ AK.<Service>/
 - **Roles:** `user` (standard), `admin` (full access)
 - **Endpoints:** POST /login, POST /register, POST /refresh, GET /me, GET /admin/users, POST /admin/users/{id}/roles
 - **Auth:** JWT Bearer validated against Keycloak OIDC discovery endpoint
-- **Tests:** 15 passing (KeycloakService, KeycloakAdminService, ExceptionHandlerMiddleware — all mocked HTTP)
+- **Tests:** 17 passing (KeycloakService, KeycloakAdminService, ExceptionHandlerMiddleware — all mocked HTTP; includes RegisterAsync publish + conflict tests)
 - **Swagger:** `http://localhost:5085/swagger` (Development only)
 - **Design doc:** [AK.UserIdentity/IDENTITY_TECHNICAL_DESIGN.md](AK.UserIdentity/IDENTITY_TECHNICAL_DESIGN.md)
 
@@ -128,15 +129,15 @@ AK.<Service>/
 - `Middleware/CorrelationIdMiddleware` — `X-Correlation-Id` header
 - `Authentication/AuthenticationExtensions` — `AddKeycloakAuthentication()` + `UseKeycloakAuth()` shared JWT auth wiring; validates `azp` claim against `settings.Audience` (`antkart-client`) to prevent cross-client token reuse; logs `JsonException` on malformed `realm_access` claim
 - `Authentication/KeycloakSettings` — typed config record for Keycloak settings
-- `Authentication/HttpContextExtensions` — `GetUserId()` extracts `sub` (Keycloak UUID) from JWT; falls back to `preferred_username`; throws `UnauthorizedAccessException` if neither is present
+- `Authentication/HttpContextExtensions` — `GetUserId()` extracts `sub` from JWT; `GetUserEmail()` reads `email`/`ClaimTypes.Email`; `GetUserDisplayName()` reads `name`/`given_name`+`family_name`/`preferred_username`
 - `Messaging/IIntegrationEvent` — base interface for all integration events
-- `Messaging/IntegrationEvents/` — `OrderCreatedIntegrationEvent`, `StockReservedIntegrationEvent`, `StockReservationFailedIntegrationEvent`, `OrderConfirmedIntegrationEvent`, `OrderCancelledIntegrationEvent`, `CartClearedIntegrationEvent`
+- `Messaging/IntegrationEvents/` — `OrderCreatedIntegrationEvent` (enriched: CustomerEmail, CustomerName, OrderNumber), `OrderConfirmedIntegrationEvent` (enriched), `OrderCancelledIntegrationEvent` (enriched + UserId), `PaymentSucceededIntegrationEvent` (enriched), `PaymentFailedIntegrationEvent` (enriched), `UserRegisteredIntegrationEvent` (new — published by AK.UserIdentity on registration), `StockReservedIntegrationEvent`, `StockReservationFailedIntegrationEvent`, `CartClearedIntegrationEvent`, `PaymentInitiatedIntegrationEvent`
 - `Messaging/MassTransitExtensions` — `AddRabbitMqMassTransit()` helper (kebab-case, global retry)
 - `Resilience/ResilienceExtensions` — `AddHttpResilienceWithCircuitBreaker()`, `AddRedisResilience()`, `AddNpgsqlResilience()` (Npgsql uses exponential backoff + jitter to prevent thundering herd on DB reconnect)
 
 ### ✅ AK.IntegrationTests  (Event Bus Tests)
 - **Framework:** MassTransit in-memory test harness (no RabbitMQ, no DB, no host)
-- **Tests:** 28 passing — 6 order saga, 4 order event bus, 7 payment event bus, 5 payment happy-path, 6 payment sad-path
+- **Tests:** 35 passing — 6 order saga, 4 order event bus, 7 payment event bus, 5 payment happy-path, 6 payment sad-path, 7 notification consumers
 - **Design doc:** [AK.IntegrationTests/INTEGRATION_TESTS.md](AK.IntegrationTests/INTEGRATION_TESTS.md)
 
 ### ✅ AK.Payments  (REST Minimal API)
@@ -148,10 +149,25 @@ AK.<Service>/
 - **Operations:** Initiate payment, verify signature, saved cards CRUD, user payment history
 - **Saved cards:** PCI-compliant — Razorpay token IDs only, never raw card numbers
 - **Integration events:** Publishes `PaymentInitiatedIntegrationEvent`, `PaymentSucceededIntegrationEvent`, `PaymentFailedIntegrationEvent`; AK.Order consumes succeeded/failed to update order status
-- **Tests:** 65 passing (domain, commands, queries, validators — SaveCard, DeleteSavedCard, GetPaymentById, GetPaymentByOrderId, GetUserPayments, GetUserSavedCards, VerifyPayment, SaveCard validators)
+- **Tests:** 69 passing (domain, commands, queries, validators — SaveCard, DeleteSavedCard, GetPaymentById, GetPaymentByOrderId, GetUserPayments, GetUserSavedCards, VerifyPayment, SaveCard validators)
 - **Swagger:** `http://localhost:5086/swagger` (Development only)
 - **Removed:** Unimplemented `/api/payments/webhook` stub endpoint was removed
 - **Design doc:** [AK.Payments/PAYMENTS_TECHNICAL_DESIGN.md](AK.Payments/PAYMENTS_TECHNICAL_DESIGN.md)
+
+### ✅ AK.Notification  (REST Minimal API — Event-driven)
+- **Transport:** HTTP REST, port 5087 (dev) / 8086 (Docker)
+- **Database:** PostgreSQL — `AKNotificationsDb` via EF Core 9 + Npgsql, auto-migrates on startup
+- **Email (local dev):** Mailhog SMTP trap — port 1025 (SMTP), port 8025 (web UI at `http://localhost:8025`)
+- **Email (production):** Gmail SMTP via `antkartadmin@gmail.com` — set `EmailSettings__Password` env var with app password
+- **Architecture:** DDD + Clean Architecture (Domain → Application → Infrastructure → API)
+- **Patterns:** CQRS (MediatR 12.4.1), FluentValidation, MassTransit consumers, channel abstraction
+- **Channel abstraction:** `INotificationChannel` interface resolved by `INotificationChannelResolver`; Email fully implemented (MailKit); SMS + WhatsApp are stubbed for future activation
+- **Events consumed:** `UserRegisteredIntegrationEvent` (welcome email), `OrderCreatedIntegrationEvent` (order confirmation), `OrderConfirmedIntegrationEvent` (stock confirmed), `OrderCancelledIntegrationEvent` (cancellation notice), `PaymentSucceededIntegrationEvent` (payment receipt), `PaymentFailedIntegrationEvent` (payment failure alert)
+- **Retention:** `NotificationCleanupService` (BackgroundService) deletes notifications older than 90 days, runs daily at 02:00 UTC
+- **Gateway routes:** `GET /gateway/notifications/{everything}` — authenticated, 20 RPS rate limit
+- **Tests:** 37 passing (domain, command handler, query handlers, consumers, template renderer)
+- **Swagger:** `http://localhost:5087/swagger` (Development only)
+- **Design doc:** [AK.Notification/NOTIFICATION_TECHNICAL_DESIGN.md](AK.Notification/NOTIFICATION_TECHNICAL_DESIGN.md)
 
 ---
 

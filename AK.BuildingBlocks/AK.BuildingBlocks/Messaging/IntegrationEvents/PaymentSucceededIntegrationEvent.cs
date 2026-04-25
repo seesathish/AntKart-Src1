@@ -4,6 +4,10 @@ public sealed record PaymentSucceededIntegrationEvent(
     Guid PaymentId,
     Guid OrderId,
     string UserId,
+    string CustomerEmail,
+    string CustomerName,
+    string OrderNumber,
+    decimal Amount,
     string RazorpayPaymentId) : IIntegrationEvent
 {
     public Guid EventId { get; } = Guid.NewGuid();

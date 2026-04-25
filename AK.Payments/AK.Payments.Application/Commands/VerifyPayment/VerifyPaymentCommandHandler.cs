@@ -22,14 +22,18 @@ public sealed class VerifyPaymentCommandHandler(IUnitOfWork uow, IRazorpayClient
         {
             payment.MarkSucceeded(request.RazorpayPaymentId, request.RazorpaySignature);
             var succeededEvt = new PaymentSucceededIntegrationEvent(
-                payment.Id, payment.OrderId, payment.UserId, request.RazorpayPaymentId);
+                payment.Id, payment.OrderId, payment.UserId,
+                payment.CustomerEmail, payment.CustomerName, payment.OrderNumber,
+                payment.Amount, request.RazorpayPaymentId);
             await publisher.Publish(succeededEvt, ct);
         }
         else
         {
             payment.MarkFailed("Signature verification failed.");
             var failedEvt = new PaymentFailedIntegrationEvent(
-                payment.Id, payment.OrderId, payment.UserId, "Signature verification failed.");
+                payment.Id, payment.OrderId, payment.UserId,
+                payment.CustomerEmail, payment.CustomerName, payment.OrderNumber,
+                "Signature verification failed.");
             await publisher.Publish(failedEvt, ct);
         }
 

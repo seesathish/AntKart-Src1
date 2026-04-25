@@ -36,16 +36,27 @@ public sealed class PaymentEntityTests
     }
 
     [Fact]
+    public void Create_StoresCustomerEmailAndOrderNumber()
+    {
+        var payment = PaymentTestDataFactory.CreatePayment(
+            customerEmail: "test@antkart.com",
+            orderNumber: "ORD-20260425-ABCD1234");
+
+        payment.CustomerEmail.Should().Be("test@antkart.com");
+        payment.OrderNumber.Should().Be("ORD-20260425-ABCD1234");
+    }
+
+    [Fact]
     public void Create_WithEmptyUserId_ThrowsArgumentException()
     {
-        var act = () => Payment.Create(Guid.NewGuid(), string.Empty, 100m, PaymentMethod.Card);
+        var act = () => Payment.Create(Guid.NewGuid(), string.Empty, "a@b.com", "A", "ORD-X", 100m, PaymentMethod.Card);
         act.Should().Throw<ArgumentException>().WithMessage("*UserId*");
     }
 
     [Fact]
     public void Create_WithEmptyOrderId_ThrowsArgumentException()
     {
-        var act = () => Payment.Create(Guid.Empty, "user1", 100m, PaymentMethod.Card);
+        var act = () => Payment.Create(Guid.Empty, "user1", "a@b.com", "A", "ORD-X", 100m, PaymentMethod.Card);
         act.Should().Throw<ArgumentException>().WithMessage("*OrderId*");
     }
 

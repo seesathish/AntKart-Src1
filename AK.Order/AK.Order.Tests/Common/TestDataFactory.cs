@@ -30,13 +30,15 @@ public static class TestDataFactory
 
     public static OrderEntity CreateOrder(
         string userId = "user-123",
+        string customerEmail = "john@example.com",
+        string customerName = "John Doe",
         ShippingAddress? shippingAddress = null,
         List<OrderItem>? items = null,
         string? notes = null)
     {
         shippingAddress ??= CreateShippingAddress();
         items ??= [CreateOrderItem()];
-        return OrderEntity.Create(userId, shippingAddress, items, notes);
+        return OrderEntity.Create(userId, customerEmail, customerName, shippingAddress, items, notes);
     }
 
     public static CreateOrderDto CreateOrderDto() => new(

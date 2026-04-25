@@ -58,11 +58,13 @@ public static class OrderEndpoints
         })
         .WithName("GetMyOrders");
 
-        // POST /api/orders — userId injected from JWT (not accepted from request body)
+        // POST /api/orders — userId, email, name injected from JWT (not accepted from request body)
         group.MapPost("/", async (HttpContext http, CreateOrderDto orderDto, IMediator mediator) =>
         {
             var userId = http.GetUserId();
-            var order = await mediator.Send(new CreateOrderCommand(userId, orderDto));
+            var customerEmail = http.GetUserEmail();
+            var customerName = http.GetUserDisplayName();
+            var order = await mediator.Send(new CreateOrderCommand(userId, customerEmail, customerName, orderDto));
             return Results.Created($"/api/orders/{order.Id}", order);
         })
         .WithName("CreateOrder");

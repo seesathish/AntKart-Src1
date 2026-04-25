@@ -17,7 +17,7 @@ public sealed class InitiatePaymentCommandHandler(
 {
     public async Task<InitiatePaymentResponse> Handle(InitiatePaymentCommand request, CancellationToken ct)
     {
-        var payment = Payment.Create(request.OrderId, request.UserId, request.Amount, request.Method, request.SavedCardToken);
+        var payment = Payment.Create(request.OrderId, request.UserId, request.CustomerEmail, request.CustomerName, request.OrderNumber, request.Amount, request.Method, request.SavedCardToken);
         await uow.Payments.AddAsync(payment, ct);
 
         var rzpOrder = await razorpay.CreateOrderAsync(request.Amount, "INR", payment.Id.ToString(), ct);

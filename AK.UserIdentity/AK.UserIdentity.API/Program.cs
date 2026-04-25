@@ -1,6 +1,7 @@
 using AK.BuildingBlocks.Authentication;
 using AK.BuildingBlocks.HealthChecks;
 using AK.BuildingBlocks.Logging;
+using AK.BuildingBlocks.Messaging;
 using AK.UserIdentity.API.Endpoints;
 using AK.UserIdentity.API.Middleware;
 using AK.UserIdentity.API.Services;
@@ -12,6 +13,7 @@ builder.AddSerilogLogging();
 builder.Services.Configure<KeycloakSettings>(builder.Configuration.GetSection("Keycloak"));
 builder.Services.AddKeycloakAuthentication(builder.Configuration);
 builder.Services.AddDefaultHealthChecks();
+builder.Services.AddRabbitMqMassTransit(builder.Configuration, _ => { });
 
 builder.Services.AddHttpClient("keycloak", client =>
 {

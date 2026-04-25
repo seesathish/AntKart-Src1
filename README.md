@@ -128,8 +128,10 @@ AntKart/
 ├── AK.Order/             REST Minimal API — order management (PostgreSQL + SAGA)
 ├── AK.UserIdentity/      REST Minimal API — Keycloak identity proxy
 ├── AK.Gateway/           API Gateway — Ocelot single entry point
+├── AK.Payments/          REST Minimal API — payment processing (PostgreSQL + Razorpay)
+├── AK.Notification/      REST Minimal API — transactional notifications (PostgreSQL + Mailhog/SMTP)
 ├── AK.BuildingBlocks/    Shared library (messaging, resilience, logging, auth)
-├── AK.IntegrationTests/  SAGA + event bus tests (MassTransit in-memory harness)
+├── AK.IntegrationTests/  SAGA + event bus + notification consumer tests (MassTransit in-memory harness)
 ├── AntKart.postman_collection.json
 ├── docker-compose.yml
 ├── docker-compose.override.yml
@@ -151,6 +153,7 @@ AntKart/
 | [AK.Order](AK.Order/AK.Order.API) | REST Minimal API | PostgreSQL | 8083 | [Order Design](AK.Order/ORDER_TECHNICAL_DESIGN.md) |
 | [AK.UserIdentity](AK.UserIdentity/AK.UserIdentity.API) | REST Minimal API | Keycloak | 8084 | [Identity Design](AK.UserIdentity/IDENTITY_TECHNICAL_DESIGN.md) |
 | [AK.Payments](AK.Payments/AK.Payments.API) | REST Minimal API | PostgreSQL + Razorpay | 8085 | [Payments Design](AK.Payments/PAYMENTS_TECHNICAL_DESIGN.md) |
+| [AK.Notification](AK.Notification/AK.Notification.API) | REST Minimal API | PostgreSQL + Mailhog/SMTP | 8086 | [Notification Design](AK.Notification/NOTIFICATION_TECHNICAL_DESIGN.md) |
 | [AK.Gateway](AK.Gateway/AK.Gateway.API) | Ocelot API Gateway | — | 9090 | [Gateway Design](AK.Gateway/API_GATEWAY.md) |
 
 ## Cross-Cutting
@@ -199,6 +202,9 @@ docker-compose up --build
 | AK.ShoppingCart Swagger | http://localhost:8082/swagger (Development only) |
 | AK.Order Swagger | http://localhost:8083/swagger (Development only) |
 | AK.UserIdentity Swagger | http://localhost:8084/swagger (Development only) |
+| AK.Payments Swagger | http://localhost:8085/swagger (Development only) |
+| AK.Notification Swagger | http://localhost:5087/swagger (Development only) |
+| **Mailhog Web UI** | **http://localhost:8025** (captured emails) |
 
 > **Keycloak auto-import:** The `antkart` realm is imported from `keycloak/antkart-realm.json` on first start. Pre-seeded users: `admin/admin123` (admin+user), `user1/user123` (user), `admin2/Admin2Pass!` (admin+user).
 
@@ -264,7 +270,9 @@ cd AK.Discount/AK.Discount.Grpc && dotnet run   # :5001
 cd AK.ShoppingCart/AK.ShoppingCart.API && dotnet run  # :5079
 cd AK.Order/AK.Order.API && dotnet run          # :5080
 cd AK.UserIdentity/AK.UserIdentity.API && dotnet run  # :5085
-cd AK.Gateway/AK.Gateway.API && dotnet run      # :8000
+cd AK.Payments/AK.Payments.API && dotnet run          # :5086
+cd AK.Notification/AK.Notification.API && dotnet run  # :5087
+cd AK.Gateway/AK.Gateway.API && dotnet run            # :8000
 ```
 
 ---
@@ -295,8 +303,9 @@ dotnet test
 | AK.Products.Tests | 202 |
 | AK.Discount.Tests | 53 |
 | AK.ShoppingCart.Tests | 88 |
-| AK.Order.Tests | 106 |
-| AK.UserIdentity.Tests | 15 |
-| AK.IntegrationTests | 28 |
-| AK.Payments.Tests | 65 |
-| **Total** | **557** |
+| AK.Order.Tests | 109 |
+| AK.UserIdentity.Tests | 17 |
+| AK.IntegrationTests | 35 |
+| AK.Payments.Tests | 69 |
+| AK.Notification.Tests | 37 |
+| **Total** | **610** |

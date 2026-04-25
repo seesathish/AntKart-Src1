@@ -23,12 +23,15 @@ public sealed class CreateOrderCommandHandler(IUnitOfWork uow, IPublishEndpoint 
         var items = request.Order.Items.Select(i =>
             OrderItem.Create(i.ProductId, i.ProductName, i.SKU, i.Price, i.Quantity, i.ImageUrl)).ToList();
 
-        var order = OrderEntity.Create(request.UserId, shippingAddress, items, request.Order.Notes);
+        var order = OrderEntity.Create(request.UserId, request.CustomerEmail, request.CustomerName, shippingAddress, items, request.Order.Notes);
         await uow.Orders.AddAsync(order, ct);
 
         var integrationEvent = new OrderCreatedIntegrationEvent(
             order.Id,
             order.UserId,
+            order.CustomerEmail,
+            order.CustomerName,
+            order.OrderNumber,
             items.Select(i => new OrderItemPayload(i.ProductId, i.SKU, i.Quantity, i.Price)).ToList(),
             order.TotalAmount);
 

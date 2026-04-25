@@ -13,6 +13,9 @@ public sealed class PaymentConfiguration : IEntityTypeConfiguration<Payment>
         builder.Property(p => p.Id).ValueGeneratedNever();
         builder.Property(p => p.OrderId).IsRequired();
         builder.Property(p => p.UserId).IsRequired().HasMaxLength(100);
+        builder.Property(p => p.CustomerEmail).IsRequired().HasMaxLength(256).HasDefaultValue(string.Empty);
+        builder.Property(p => p.CustomerName).IsRequired().HasMaxLength(200).HasDefaultValue(string.Empty);
+        builder.Property(p => p.OrderNumber).IsRequired().HasMaxLength(30).HasDefaultValue(string.Empty);
         builder.Property(p => p.Amount).HasColumnType("decimal(18,2)").IsRequired();
         builder.Property(p => p.Currency).IsRequired().HasMaxLength(10).HasDefaultValue("INR");
         builder.Property(p => p.Status).IsRequired();

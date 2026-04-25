@@ -23,13 +23,17 @@ public class CreateOrderCommandHandlerTests
         _uow.Setup(u => u.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1);
     }
 
+    private CreateOrderCommand BuildCommand(
+        string userId = "user-123",
+        string email = "john@example.com",
+        string name = "John Doe")
+        => new(userId, email, name, TestDataFactory.CreateOrderDto());
+
     [Fact]
     public async Task Handle_ValidCommand_ReturnsOrderDto()
     {
         var handler = new CreateOrderCommandHandler(_uow.Object, _publisher.Object);
-        var command = new CreateOrderCommand("user-123", TestDataFactory.CreateOrderDto());
-
-        var result = await handler.Handle(command, CancellationToken.None);
+        var result = await handler.Handle(BuildCommand(), CancellationToken.None);
 
         result.Should().NotBeNull();
         result.UserId.Should().Be("user-123");
@@ -43,34 +47,47 @@ public class CreateOrderCommandHandlerTests
     public async Task Handle_ValidCommand_SavesOrder()
     {
         var handler = new CreateOrderCommandHandler(_uow.Object, _publisher.Object);
-        var command = new CreateOrderCommand("user-123", TestDataFactory.CreateOrderDto());
-
-        await handler.Handle(command, CancellationToken.None);
+        await handler.Handle(BuildCommand(), CancellationToken.None);
 
         _repo.Verify(r => r.AddAsync(It.IsAny<OrderEntity>(), It.IsAny<CancellationToken>()), Times.Once);
         _uow.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
-    public async Task Handle_ValidCommand_ClearsDomainEvents()
+    public async Task Handle_ValidCommand_PublishesOrderCreatedEvent()
     {
         var handler = new CreateOrderCommandHandler(_uow.Object, _publisher.Object);
-        var command = new CreateOrderCommand("user-123", TestDataFactory.CreateOrderDto());
+        await handler.Handle(BuildCommand("user-123", "john@example.com", "John Doe"), CancellationToken.None);
 
-        var result = await handler.Handle(command, CancellationToken.None);
-
-        result.Should().NotBeNull();
+        _publisher.Verify(p => p.Publish(
+            It.Is<AK.BuildingBlocks.Messaging.IntegrationEvents.OrderCreatedIntegrationEvent>(e =>
+                e.UserId == "user-123" &&
+                e.CustomerEmail == "john@example.com" &&
+                e.CustomerName == "John Doe" &&
+                e.OrderNumber.StartsWith("ORD-")),
+            It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
     public async Task Handle_ValidCommand_MapsShippingAddress()
     {
         var handler = new CreateOrderCommandHandler(_uow.Object, _publisher.Object);
-        var command = new CreateOrderCommand("user-123", TestDataFactory.CreateOrderDto());
-
-        var result = await handler.Handle(command, CancellationToken.None);
+        var result = await handler.Handle(BuildCommand(), CancellationToken.None);
 
         result.ShippingAddress.FullName.Should().Be("John Doe");
         result.ShippingAddress.City.Should().Be("Springfield");
+    }
+
+    [Fact]
+    public async Task Handle_ValidCommand_StoresCustomerEmail()
+    {
+        var handler = new CreateOrderCommandHandler(_uow.Object, _publisher.Object);
+        var result = await handler.Handle(BuildCommand(email: "customer@test.com"), CancellationToken.None);
+
+        result.Should().NotBeNull();
+        _publisher.Verify(p => p.Publish(
+            It.Is<AK.BuildingBlocks.Messaging.IntegrationEvents.OrderCreatedIntegrationEvent>(e =>
+                e.CustomerEmail == "customer@test.com"),
+            It.IsAny<CancellationToken>()), Times.Once);
     }
 }

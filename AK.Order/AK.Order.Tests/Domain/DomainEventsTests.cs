@@ -30,9 +30,12 @@ public class DomainEventsTests
     public void OrderCancelledEvent_HoldsCorrectData()
     {
         var id = Guid.NewGuid();
-        var evt = new OrderCancelledEvent(id, "user-1");
+        var evt = new OrderCancelledEvent(id, "user-1", "a@b.com", "A B", "ORD-20260418-ABCD1234");
         evt.OrderId.Should().Be(id);
         evt.UserId.Should().Be("user-1");
+        evt.CustomerEmail.Should().Be("a@b.com");
+        evt.CustomerName.Should().Be("A B");
+        evt.OrderNumber.Should().Be("ORD-20260418-ABCD1234");
     }
 
     [Fact]

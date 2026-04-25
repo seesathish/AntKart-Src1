@@ -1,5 +1,7 @@
 using AK.BuildingBlocks.Authentication;
+using AK.BuildingBlocks.Messaging.IntegrationEvents;
 using AK.UserIdentity.API.DTOs;
+using MassTransit;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;
 using System.Text;
@@ -9,7 +11,8 @@ namespace AK.UserIdentity.API.Services;
 
 public sealed class KeycloakService(
     IHttpClientFactory httpClientFactory,
-    IOptions<KeycloakSettings> settings) : IKeycloakService
+    IOptions<KeycloakSettings> settings,
+    IPublishEndpoint publisher) : IKeycloakService
 {
     private readonly KeycloakSettings _settings = settings.Value;
     private readonly JsonSerializerOptions _jsonOptions = new() { PropertyNameCaseInsensitive = true };
@@ -86,6 +89,10 @@ public sealed class KeycloakService(
         {
             var userId = locationHeader.Split('/').Last();
             await AssignDefaultRoleAsync(userId, adminToken, client, ct);
+            await publisher.Publish(new UserRegisteredIntegrationEvent(
+                userId,
+                request.Email,
+                $"{request.FirstName} {request.LastName}".Trim()), ct);
         }
     }
 

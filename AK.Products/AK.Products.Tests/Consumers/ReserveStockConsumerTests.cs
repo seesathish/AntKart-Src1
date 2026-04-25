@@ -30,7 +30,7 @@ public sealed class ReserveStockConsumerTests
         params (string productId, string sku, int qty)[] items)
     {
         var payloads = items.Select(i => new OrderItemPayload(i.productId, i.sku, i.qty, 10m)).ToList();
-        return new OrderCreatedIntegrationEvent(orderId, userId, payloads, payloads.Sum(p => p.UnitPrice * p.Quantity));
+        return new OrderCreatedIntegrationEvent(orderId, userId, "test@example.com", "Test User", "ORD-TEST-001", payloads, payloads.Sum(p => p.UnitPrice * p.Quantity));
     }
 
     [Fact]

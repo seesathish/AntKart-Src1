@@ -17,13 +17,15 @@ public static class PaymentEndpoints
             .WithTags("Payments")
             .RequireAuthorization("authenticated");
 
-        // POST /api/payments/initiate — userId injected from JWT
+        // POST /api/payments/initiate — userId, email, name injected from JWT
         group.MapPost("/initiate", async (HttpContext http, InitiatePaymentRequest req, IMediator mediator) =>
         {
             var userId = http.GetUserId();
+            var customerEmail = http.GetUserEmail();
+            var customerName = http.GetUserDisplayName();
             var command = new InitiatePaymentCommand(
-                req.OrderId, userId, req.Amount, req.Method,
-                req.SavedCardToken, req.CustomerEmail, req.CustomerContact);
+                req.OrderId, userId, customerEmail, customerName, req.OrderNumber,
+                req.Amount, req.Method, req.SavedCardToken, req.CustomerContact);
             var result = await mediator.Send(command);
             return Results.Ok(result);
         }).WithName("InitiatePayment");
@@ -57,11 +59,11 @@ public static class PaymentEndpoints
     }
 }
 
-// userId is not accepted from the client — it is always derived from the JWT
+// userId, customerEmail, customerName are always derived from the JWT — not accepted from client
 public sealed record InitiatePaymentRequest(
     Guid OrderId,
+    string OrderNumber,
     decimal Amount,
     PaymentMethod Method,
     string? SavedCardToken = null,
-    string? CustomerEmail = null,
     string? CustomerContact = null);

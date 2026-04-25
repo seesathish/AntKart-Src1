@@ -31,13 +31,19 @@ public sealed class InitiatePaymentCommandHandlerTests
     private InitiatePaymentCommandHandler CreateHandler()
         => new(_uow.Object, _razorpay.Object, _publisher.Object, _config.Object);
 
+    private static InitiatePaymentCommand BuildCommand(
+        Guid? orderId = null,
+        string userId = "user1",
+        string email = "user1@test.com",
+        string name = "Test User",
+        string orderNumber = "ORD-20260425-TESTTEST",
+        decimal amount = 999m)
+        => new(orderId ?? PaymentTestDataFactory.OrderId1, userId, email, name, orderNumber, amount, PaymentMethod.Card);
+
     [Fact]
     public async Task Handle_WithValidCommand_CreatesPaymentAndReturnsResponse()
     {
-        var handler = CreateHandler();
-        var command = new InitiatePaymentCommand(PaymentTestDataFactory.OrderId1, "user1", 999m, PaymentMethod.Card);
-
-        var result = await handler.Handle(command, CancellationToken.None);
+        var result = await CreateHandler().Handle(BuildCommand(), CancellationToken.None);
 
         result.Should().NotBeNull();
         result.RazorpayOrderId.Should().Be("order_test123");
@@ -49,12 +55,23 @@ public sealed class InitiatePaymentCommandHandlerTests
     [Fact]
     public async Task Handle_PublishesPaymentInitiatedIntegrationEvent()
     {
-        var handler = CreateHandler();
-        var command = new InitiatePaymentCommand(PaymentTestDataFactory.OrderId1, "user1", 999m, PaymentMethod.Card);
-
-        await handler.Handle(command, CancellationToken.None);
+        await CreateHandler().Handle(BuildCommand(), CancellationToken.None);
 
         _publisher.Verify(p => p.Publish(It.IsAny<PaymentInitiatedIntegrationEvent>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task Handle_StoresCustomerEmailAndOrderNumber()
+    {
+        Payment? captured = null;
+        _payments.Setup(r => r.AddAsync(It.IsAny<Payment>(), It.IsAny<CancellationToken>()))
+            .Callback<Payment, CancellationToken>((p, _) => captured = p);
+
+        await CreateHandler().Handle(BuildCommand(email: "cust@antkart.com", orderNumber: "ORD-20260425-ABCD1234"), CancellationToken.None);
+
+        captured.Should().NotBeNull();
+        captured!.CustomerEmail.Should().Be("cust@antkart.com");
+        captured.OrderNumber.Should().Be("ORD-20260425-ABCD1234");
     }
 
     [Fact]
@@ -64,9 +81,7 @@ public sealed class InitiatePaymentCommandHandlerTests
         _payments.Setup(r => r.AddAsync(It.IsAny<Payment>(), It.IsAny<CancellationToken>()))
             .Callback<Payment, CancellationToken>((p, _) => captured = p);
 
-        var handler = CreateHandler();
-        var command = new InitiatePaymentCommand(PaymentTestDataFactory.OrderId1, "user1", 999m, PaymentMethod.Card);
-        await handler.Handle(command, CancellationToken.None);
+        await CreateHandler().Handle(BuildCommand(), CancellationToken.None);
 
         captured.Should().NotBeNull();
         captured!.RazorpayOrderId.Should().Be("order_test123");
@@ -76,10 +91,7 @@ public sealed class InitiatePaymentCommandHandlerTests
     [Fact]
     public async Task Handle_CallsRazorpayCreateOrderWithCorrectAmount()
     {
-        var handler = CreateHandler();
-        var command = new InitiatePaymentCommand(PaymentTestDataFactory.OrderId1, "user1", 500m, PaymentMethod.Card);
-
-        await handler.Handle(command, CancellationToken.None);
+        await CreateHandler().Handle(BuildCommand(amount: 500m), CancellationToken.None);
 
         _razorpay.Verify(r => r.CreateOrderAsync(500m, "INR", It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
     }
@@ -87,10 +99,7 @@ public sealed class InitiatePaymentCommandHandlerTests
     [Fact]
     public async Task Handle_SavesChanges()
     {
-        var handler = CreateHandler();
-        var command = new InitiatePaymentCommand(PaymentTestDataFactory.OrderId1, "user1", 999m, PaymentMethod.Card);
-
-        await handler.Handle(command, CancellationToken.None);
+        await CreateHandler().Handle(BuildCommand(), CancellationToken.None);
 
         _uow.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }

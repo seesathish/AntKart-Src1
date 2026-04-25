@@ -32,7 +32,7 @@ public class OrderTests
     public void Create_NullShippingAddress_ThrowsArgumentNullException()
     {
         var item = TestDataFactory.CreateOrderItem();
-        var act = () => OrderEntity.Create("user-1", null!, [item]);
+        var act = () => OrderEntity.Create("user-1", "a@b.com", "A B", null!, [item]);
         act.Should().Throw<ArgumentNullException>();
     }
 
@@ -40,8 +40,16 @@ public class OrderTests
     public void Create_NoItems_ThrowsArgumentException()
     {
         var addr = TestDataFactory.CreateShippingAddress();
-        var act = () => OrderEntity.Create("user-1", addr, []);
+        var act = () => OrderEntity.Create("user-1", "a@b.com", "A B", addr, []);
         act.Should().Throw<ArgumentException>().WithMessage("*at least one item*");
+    }
+
+    [Fact]
+    public void Create_StoresCustomerEmailAndName()
+    {
+        var order = TestDataFactory.CreateOrder(customerEmail: "test@antkart.com", customerName: "Test User");
+        order.CustomerEmail.Should().Be("test@antkart.com");
+        order.CustomerName.Should().Be("Test User");
     }
 
     [Fact]

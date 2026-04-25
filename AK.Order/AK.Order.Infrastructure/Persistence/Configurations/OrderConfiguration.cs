@@ -15,6 +15,8 @@ internal sealed class OrderConfiguration : IEntityTypeConfiguration<OrderEntity>
         builder.Property(o => o.Id).ValueGeneratedNever();
         builder.Property(o => o.OrderNumber).IsRequired().HasMaxLength(30);
         builder.Property(o => o.UserId).IsRequired().HasMaxLength(100);
+        builder.Property(o => o.CustomerEmail).IsRequired().HasMaxLength(256).HasDefaultValue(string.Empty);
+        builder.Property(o => o.CustomerName).IsRequired().HasMaxLength(200).HasDefaultValue(string.Empty);
         builder.Property(o => o.Status).HasConversion<string>().HasMaxLength(30);
         builder.Property(o => o.PaymentStatus).HasConversion<string>().HasMaxLength(30);
         builder.Property(o => o.Notes).HasMaxLength(1000);

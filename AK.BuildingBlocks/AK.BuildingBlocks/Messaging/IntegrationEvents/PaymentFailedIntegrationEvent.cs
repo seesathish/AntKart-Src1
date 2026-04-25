@@ -4,6 +4,9 @@ public sealed record PaymentFailedIntegrationEvent(
     Guid PaymentId,
     Guid OrderId,
     string UserId,
+    string CustomerEmail,
+    string CustomerName,
+    string OrderNumber,
     string Reason) : IIntegrationEvent
 {
     public Guid EventId { get; } = Guid.NewGuid();

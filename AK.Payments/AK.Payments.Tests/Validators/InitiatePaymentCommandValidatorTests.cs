@@ -11,7 +11,7 @@ public sealed class InitiatePaymentCommandValidatorTests
     [Fact]
     public void Validate_WithValidCommand_Passes()
     {
-        var command = new InitiatePaymentCommand(Guid.NewGuid(), "user1", 100m, PaymentMethod.Card);
+        var command = new InitiatePaymentCommand(Guid.NewGuid(), "user1", "user@test.com", "Test User", "ORD-001", 100m, PaymentMethod.Card);
         var result = _validator.Validate(command);
         result.IsValid.Should().BeTrue();
     }
@@ -19,7 +19,7 @@ public sealed class InitiatePaymentCommandValidatorTests
     [Fact]
     public void Validate_WithEmptyOrderId_Fails()
     {
-        var command = new InitiatePaymentCommand(Guid.Empty, "user1", 100m, PaymentMethod.Card);
+        var command = new InitiatePaymentCommand(Guid.Empty, "user1", "user@test.com", "Test User", "ORD-001", 100m, PaymentMethod.Card);
         var result = _validator.Validate(command);
         result.IsValid.Should().BeFalse();
         result.Errors.Should().Contain(e => e.PropertyName == "OrderId");
@@ -28,7 +28,7 @@ public sealed class InitiatePaymentCommandValidatorTests
     [Fact]
     public void Validate_WithEmptyUserId_Fails()
     {
-        var command = new InitiatePaymentCommand(Guid.NewGuid(), string.Empty, 100m, PaymentMethod.Card);
+        var command = new InitiatePaymentCommand(Guid.NewGuid(), string.Empty, "user@test.com", "Test User", "ORD-001", 100m, PaymentMethod.Card);
         var result = _validator.Validate(command);
         result.IsValid.Should().BeFalse();
         result.Errors.Should().Contain(e => e.PropertyName == "UserId");
@@ -37,7 +37,7 @@ public sealed class InitiatePaymentCommandValidatorTests
     [Fact]
     public void Validate_WithZeroAmount_Fails()
     {
-        var command = new InitiatePaymentCommand(Guid.NewGuid(), "user1", 0m, PaymentMethod.Card);
+        var command = new InitiatePaymentCommand(Guid.NewGuid(), "user1", "user@test.com", "Test User", "ORD-001", 0m, PaymentMethod.Card);
         var result = _validator.Validate(command);
         result.IsValid.Should().BeFalse();
         result.Errors.Should().Contain(e => e.PropertyName == "Amount");

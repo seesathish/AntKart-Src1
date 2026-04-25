@@ -7,8 +7,10 @@ namespace AK.Payments.Application.Commands.InitiatePayment;
 public sealed record InitiatePaymentCommand(
     Guid OrderId,
     string UserId,
+    string CustomerEmail,
+    string CustomerName,
+    string OrderNumber,
     decimal Amount,
     PaymentMethod Method,
     string? SavedCardToken = null,
-    string? CustomerEmail = null,
     string? CustomerContact = null) : IRequest<InitiatePaymentResponse>;

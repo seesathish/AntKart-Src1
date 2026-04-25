@@ -248,9 +248,15 @@ services:
       Keycloak__Realm: "antkart"
       Keycloak__ClientId: "antkart-client"
       Keycloak__ClientSecret: "antkart-secret"
+      RabbitMq__Host: "rabbitmq"
+      RabbitMq__VirtualHost: "/"
+      RabbitMq__Username: "guest"
+      RabbitMq__Password: "guest"
       Elasticsearch__Url: "http://elasticsearch:9200"
     depends_on:
       keycloak:
+        condition: service_healthy
+      rabbitmq:
         condition: service_healthy
       elasticsearch:
         condition: service_healthy
@@ -307,6 +313,58 @@ services:
       elasticsearch:
         condition: service_healthy
 
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: antkart-mailhog
+    restart: unless-stopped
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
+  ak-notification-api:
+    image: ak-notification-api
+    build:
+      context: .
+      dockerfile: AK.Notification/AK.Notification.API/Dockerfile
+    container_name: antkart-notification-api
+    restart: unless-stopped
+    ports:
+      - "8086:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__Postgres: "Host=postgres;Port=5432;Database=AKNotificationsDb;Username=postgres;Password=postgres"
+      Keycloak__Authority: "http://keycloak:8080/realms/antkart"
+      Keycloak__Audience: "antkart-client"
+      Keycloak__RequireHttpsMetadata: "false"
+      Keycloak__AdminUrl: "http://keycloak:8080"
+      Keycloak__Realm: "antkart"
+      Keycloak__ClientId: "antkart-client"
+      Keycloak__ClientSecret: "antkart-secret"
+      RabbitMq__Host: "rabbitmq"
+      RabbitMq__VirtualHost: "/"
+      RabbitMq__Username: "guest"
+      RabbitMq__Password: "guest"
+      EmailSettings__From: "antkartadmin@gmail.com"
+      EmailSettings__DisplayName: "AntKart"
+      EmailSettings__Host: "mailhog"
+      EmailSettings__Port: "1025"
+      EmailSettings__EnableSsl: "false"
+      EmailSettings__Username: ""
+      EmailSettings__Password: ""
+      NotificationSettings__RetentionDays: "90"
+      Elasticsearch__Url: "http://elasticsearch:9200"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+      mailhog:
+        condition: service_started
+
   ak-gateway-api:
     image: ak-gateway-api
     build:
@@ -339,6 +397,8 @@ services:
       ak-useridentity-api:
         condition: service_started
       ak-payments-api:
+        condition: service_started
+      ak-notification-api:
         condition: service_started
 
 volumes:

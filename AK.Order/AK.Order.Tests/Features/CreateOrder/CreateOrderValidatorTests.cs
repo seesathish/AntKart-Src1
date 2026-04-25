@@ -12,7 +12,7 @@ public class CreateOrderValidatorTests
     [Fact]
     public void Validate_ValidCommand_PassesValidation()
     {
-        var command = new CreateOrderCommand("user-123", TestDataFactory.CreateOrderDto());
+        var command = new CreateOrderCommand("user-123", "a@b.com", "Test", TestDataFactory.CreateOrderDto());
         var result = _validator.Validate(command);
         result.IsValid.Should().BeTrue();
     }
@@ -20,7 +20,7 @@ public class CreateOrderValidatorTests
     [Fact]
     public void Validate_EmptyUserId_FailsValidation()
     {
-        var command = new CreateOrderCommand("", TestDataFactory.CreateOrderDto());
+        var command = new CreateOrderCommand("", "a@b.com", "Test", TestDataFactory.CreateOrderDto());
         var result = _validator.Validate(command);
         result.IsValid.Should().BeFalse();
         result.Errors.Should().Contain(e => e.PropertyName == "UserId");
@@ -29,7 +29,7 @@ public class CreateOrderValidatorTests
     [Fact]
     public void Validate_UserIdTooLong_FailsValidation()
     {
-        var command = new CreateOrderCommand(new string('x', 101), TestDataFactory.CreateOrderDto());
+        var command = new CreateOrderCommand(new string('x', 101), "a@b.com", "Test", TestDataFactory.CreateOrderDto());
         var result = _validator.Validate(command);
         result.IsValid.Should().BeFalse();
     }
@@ -41,7 +41,7 @@ public class CreateOrderValidatorTests
             TestDataFactory.CreateOrderDto().ShippingAddress,
             [],
             null);
-        var command = new CreateOrderCommand("user-1", dto);
+        var command = new CreateOrderCommand("user-1", "a@b.com", "Test", dto);
         var result = _validator.Validate(command);
         result.IsValid.Should().BeFalse();
         result.Errors.Should().Contain(e => e.ErrorMessage.Contains("at least one item"));
@@ -54,7 +54,7 @@ public class CreateOrderValidatorTests
             TestDataFactory.CreateOrderDto().ShippingAddress,
             [new CreateOrderItemDto("p1", "Product", "SKU", 0m, 1, null)],
             null);
-        var command = new CreateOrderCommand("user-1", dto);
+        var command = new CreateOrderCommand("user-1", "a@b.com", "Test", dto);
         var result = _validator.Validate(command);
         result.IsValid.Should().BeFalse();
     }
@@ -66,7 +66,7 @@ public class CreateOrderValidatorTests
             TestDataFactory.CreateOrderDto().ShippingAddress,
             [new CreateOrderItemDto("p1", "Product", "SKU", 10m, 0, null)],
             null);
-        var command = new CreateOrderCommand("user-1", dto);
+        var command = new CreateOrderCommand("user-1", "a@b.com", "Test", dto);
         var result = _validator.Validate(command);
         result.IsValid.Should().BeFalse();
     }
@@ -76,7 +76,7 @@ public class CreateOrderValidatorTests
     {
         var addr = new ShippingAddressDto("John", "123 Main St", null, "", "IL", "62701", "US", "+1-555");
         var dto = new CreateOrderDto(addr, TestDataFactory.CreateOrderDto().Items, null);
-        var command = new CreateOrderCommand("user-1", dto);
+        var command = new CreateOrderCommand("user-1", "a@b.com", "Test", dto);
         var result = _validator.Validate(command);
         result.IsValid.Should().BeFalse();
     }
@@ -88,7 +88,7 @@ public class CreateOrderValidatorTests
             TestDataFactory.CreateOrderDto().ShippingAddress,
             [new CreateOrderItemDto("", "Product", "SKU", 10m, 1, null)],
             null);
-        var command = new CreateOrderCommand("user-1", dto);
+        var command = new CreateOrderCommand("user-1", "a@b.com", "Test", dto);
         var result = _validator.Validate(command);
         result.IsValid.Should().BeFalse();
     }

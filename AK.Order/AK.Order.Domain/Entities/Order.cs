@@ -11,6 +11,8 @@ public sealed class Order : Entity, IAggregateRoot
 
     public string OrderNumber { get; private set; } = string.Empty;
     public string UserId { get; private set; } = string.Empty;
+    public string CustomerEmail { get; private set; } = string.Empty;
+    public string CustomerName { get; private set; } = string.Empty;
     public OrderStatus Status { get; private set; }
     public PaymentStatus PaymentStatus { get; private set; }
     public ShippingAddress ShippingAddress { get; private set; } = null!;
@@ -24,6 +26,8 @@ public sealed class Order : Entity, IAggregateRoot
 
     public static Order Create(
         string userId,
+        string customerEmail,
+        string customerName,
         ShippingAddress shippingAddress,
         IEnumerable<OrderItem> items,
         string? notes = null)
@@ -40,6 +44,8 @@ public sealed class Order : Entity, IAggregateRoot
         {
             OrderNumber = GenerateOrderNumber(),
             UserId = userId.Trim(),
+            CustomerEmail = customerEmail.Trim(),
+            CustomerName = customerName.Trim(),
             ShippingAddress = shippingAddress,
             Status = OrderStatus.Pending,
             PaymentStatus = PaymentStatus.Pending,
@@ -86,7 +92,7 @@ public sealed class Order : Entity, IAggregateRoot
 
         Status = OrderStatus.Cancelled;
         SetUpdatedAt();
-        AddDomainEvent(new OrderCancelledEvent(Id, UserId));
+        AddDomainEvent(new OrderCancelledEvent(Id, UserId, CustomerEmail, CustomerName, OrderNumber));
     }
 
     public void ConfirmPayment()

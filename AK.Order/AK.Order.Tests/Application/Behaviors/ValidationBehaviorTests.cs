@@ -19,7 +19,7 @@ public class ValidationBehaviorTests
         var next = new Mock<RequestHandlerDelegate<object>>();
         next.Setup(n => n()).ReturnsAsync(new object());
 
-        var command = new CreateOrderCommand("user-1", TestDataFactory.CreateOrderDto());
+        var command = new CreateOrderCommand("user-1", "a@b.com", "Test", TestDataFactory.CreateOrderDto());
         await behavior.Handle(command, next.Object, CancellationToken.None);
 
         next.Verify(n => n(), Times.Once);
@@ -34,7 +34,7 @@ public class ValidationBehaviorTests
         var next = new Mock<RequestHandlerDelegate<object>>();
         next.Setup(n => n()).ReturnsAsync(new object());
 
-        var command = new CreateOrderCommand("user-1", TestDataFactory.CreateOrderDto());
+        var command = new CreateOrderCommand("user-1", "a@b.com", "Test", TestDataFactory.CreateOrderDto());
         await behavior.Handle(command, next.Object, CancellationToken.None);
 
         next.Verify(n => n(), Times.Once);
@@ -47,7 +47,7 @@ public class ValidationBehaviorTests
             [new CreateOrderValidator()]);
 
         var next = new Mock<RequestHandlerDelegate<object>>();
-        var command = new CreateOrderCommand("", TestDataFactory.CreateOrderDto());
+        var command = new CreateOrderCommand("", "a@b.com", "Test", TestDataFactory.CreateOrderDto());
 
         var act = async () => await behavior.Handle(command, next.Object, CancellationToken.None);
 
