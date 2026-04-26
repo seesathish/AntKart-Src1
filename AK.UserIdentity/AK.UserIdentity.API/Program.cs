@@ -13,7 +13,7 @@ builder.AddSerilogLogging();
 builder.Services.Configure<KeycloakSettings>(builder.Configuration.GetSection("Keycloak"));
 builder.Services.AddKeycloakAuthentication(builder.Configuration);
 builder.Services.AddDefaultHealthChecks();
-builder.Services.AddRabbitMqMassTransit(builder.Configuration, _ => { });
+builder.Services.AddRabbitMqMassTransit(builder.Configuration, "identity", _ => { });
 
 builder.Services.AddHttpClient("keycloak", client =>
 {

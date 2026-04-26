@@ -20,7 +20,7 @@ public static class ServiceCollectionExtensions
 
         services.AddRedisResilience();
 
-        services.AddRabbitMqMassTransit(configuration, cfg =>
+        services.AddRabbitMqMassTransit(configuration, "cart", cfg =>
         {
             cfg.AddConsumer<ClearCartOnOrderConfirmedConsumer>();
         });
