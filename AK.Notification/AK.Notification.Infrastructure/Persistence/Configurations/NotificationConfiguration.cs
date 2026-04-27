@@ -50,6 +50,7 @@ internal sealed class NotificationConfiguration : IEntityTypeConfiguration<Notif
         builder.Property(n => n.CreatedAt)
             .IsRequired();
 
+        // UpdatedAt is nullable: inherited from AK.BuildingBlocks.DDD.Entity, set only after mutation.
         builder.Property(n => n.UpdatedAt);
 
         builder.Property(n => n.RetryCount)

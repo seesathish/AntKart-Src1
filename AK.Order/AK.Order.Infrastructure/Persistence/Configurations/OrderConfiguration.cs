@@ -21,6 +21,7 @@ internal sealed class OrderConfiguration : IEntityTypeConfiguration<OrderEntity>
         builder.Property(o => o.PaymentStatus).HasConversion<string>().HasMaxLength(30);
         builder.Property(o => o.Notes).HasMaxLength(1000);
         builder.Property(o => o.CreatedAt).IsRequired();
+        // UpdatedAt is nullable: inherited from AK.BuildingBlocks.DDD.Entity, set only after mutation.
         builder.Property(o => o.UpdatedAt);
 
         builder.OwnsOne(o => o.ShippingAddress, addr =>

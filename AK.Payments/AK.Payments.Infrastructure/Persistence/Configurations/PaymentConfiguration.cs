@@ -26,6 +26,7 @@ public sealed class PaymentConfiguration : IEntityTypeConfiguration<Payment>
         builder.Property(p => p.FailureReason).HasMaxLength(500);
         builder.Property(p => p.SavedCardToken).HasMaxLength(50);
         builder.Property(p => p.CreatedAt).IsRequired();
+        // UpdatedAt is nullable: set only after the first mutation (base Entity pattern).
         builder.Property(p => p.UpdatedAt);
 
         builder.HasIndex(p => p.OrderId);
