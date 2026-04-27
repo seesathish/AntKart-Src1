@@ -1,0 +1,1240 @@
+{
+  "configuration" : { },
+  "description" : "Cloud-native .NET 9 microservices e-commerce platform",
+  "documentation" : { },
+  "id" : 1,
+  "lastModifiedDate" : "2026-04-27T17:42:14Z",
+  "model" : {
+    "people" : [ {
+      "description" : "Browses products, manages cart, places orders, pays",
+      "id" : "1",
+      "name" : "Customer",
+      "properties" : {
+        "structurizr.dsl.identifier" : "customer"
+      },
+      "relationships" : [ {
+        "description" : "Shops, places orders, pays",
+        "destinationId" : "8",
+        "id" : "36",
+        "sourceId" : "1",
+        "tags" : "Relationship",
+        "technology" : "HTTPS · REST/JSON"
+      }, {
+        "description" : "All requests",
+        "destinationId" : "9",
+        "id" : "43",
+        "sourceId" : "1",
+        "tags" : "Relationship",
+        "technology" : "HTTPS · port 9090"
+      } ],
+      "tags" : "Element,Person"
+    }, {
+      "description" : "Manages product catalogue, monitors orders, assigns roles",
+      "id" : "2",
+      "name" : "Administrator",
+      "properties" : {
+        "structurizr.dsl.identifier" : "admin"
+      },
+      "relationships" : [ {
+        "description" : "Manages catalogue and orders",
+        "destinationId" : "8",
+        "id" : "37",
+        "sourceId" : "2",
+        "tags" : "Relationship",
+        "technology" : "HTTPS · REST/JSON"
+      }, {
+        "description" : "All admin requests",
+        "destinationId" : "9",
+        "id" : "44",
+        "sourceId" : "2",
+        "tags" : "Relationship",
+        "technology" : "HTTPS · port 9090"
+      } ],
+      "tags" : "Element,Person"
+    } ],
+    "softwareSystems" : [ {
+      "description" : "Open-source identity provider. Hosts the antkart realm with user/admin roles. Issues JWT tokens.",
+      "documentation" : { },
+      "id" : "3",
+      "name" : "Keycloak 24",
+      "properties" : {
+        "structurizr.dsl.identifier" : "keycloak"
+      },
+      "tags" : "Element,Software System,External"
+    }, {
+      "description" : "Payment gateway. Creates order objects, processes card payments, returns HMAC-SHA256 signatures.",
+      "documentation" : { },
+      "id" : "4",
+      "name" : "Razorpay",
+      "properties" : {
+        "structurizr.dsl.identifier" : "razorpay"
+      },
+      "tags" : "Element,Software System,External"
+    }, {
+      "description" : "Email delivery. Mailhog SMTP trap in dev; Gmail SMTP in production.",
+      "documentation" : { },
+      "id" : "5",
+      "name" : "SMTP / Mailhog",
+      "properties" : {
+        "structurizr.dsl.identifier" : "smtp"
+      },
+      "tags" : "Element,Software System,External"
+    }, {
+      "description" : "Observability. Elasticsearch stores structured JSON logs. Kibana provides dashboards.",
+      "documentation" : { },
+      "id" : "6",
+      "name" : "ELK Stack",
+      "properties" : {
+        "structurizr.dsl.identifier" : "elk"
+      },
+      "tags" : "Element,Software System,External"
+    }, {
+      "description" : "AMQP message broker. Fans out integration events. Hosts SAGA state machine queues.",
+      "documentation" : { },
+      "id" : "7",
+      "name" : "RabbitMQ 3",
+      "properties" : {
+        "structurizr.dsl.identifier" : "rabbitmq"
+      },
+      "relationships" : [ {
+        "description" : "Consumes: OrderCreated → reserve stock",
+        "destinationId" : "11",
+        "id" : "65",
+        "sourceId" : "7",
+        "tags" : "Relationship",
+        "technology" : "AMQP"
+      }, {
+        "description" : "Consumes: OrderCreated → reserve stock",
+        "destinationId" : "8",
+        "id" : "66",
+        "linkedRelationshipId" : "65",
+        "sourceId" : "7",
+        "technology" : "AMQP"
+      }, {
+        "description" : "Consumes: StockReserved, StockFailed, PaymentSucceeded, PaymentFailed",
+        "destinationId" : "14",
+        "id" : "67",
+        "sourceId" : "7",
+        "tags" : "Relationship",
+        "technology" : "AMQP · SAGA + consumers"
+      }, {
+        "description" : "Consumes: 6 integration events → email",
+        "destinationId" : "29",
+        "id" : "68",
+        "sourceId" : "7",
+        "tags" : "Relationship",
+        "technology" : "AMQP"
+      }, {
+        "description" : "OrderCreated, StockReserved, StockFailed",
+        "destinationId" : "23",
+        "id" : "84",
+        "sourceId" : "7",
+        "tags" : "Relationship",
+        "technology" : "AMQP"
+      }, {
+        "description" : "Payment + Order events",
+        "destinationId" : "24",
+        "id" : "87",
+        "sourceId" : "7",
+        "tags" : "Relationship",
+        "technology" : "AMQP"
+      } ],
+      "tags" : "Element,Software System,External"
+    }, {
+      "containers" : [ {
+        "description" : "Single entry point. JWT passthrough, per-route rate limiting (10-30 RPS), QoS circuit breaker.",
+        "documentation" : { },
+        "id" : "9",
+        "name" : "AK.Gateway",
+        "properties" : {
+          "structurizr.dsl.identifier" : "antkart.gateway"
+        },
+        "relationships" : [ {
+          "description" : "Routes /api/auth/** · /api/admin/**",
+          "destinationId" : "10",
+          "id" : "45",
+          "sourceId" : "9",
+          "tags" : "Relationship",
+          "technology" : "HTTP"
+        }, {
+          "description" : "Routes /api/v1/products/**",
+          "destinationId" : "11",
+          "id" : "46",
+          "sourceId" : "9",
+          "tags" : "Relationship",
+          "technology" : "HTTP"
+        }, {
+          "description" : "Routes /api/v1/cart/**",
+          "destinationId" : "13",
+          "id" : "47",
+          "sourceId" : "9",
+          "tags" : "Relationship",
+          "technology" : "HTTP"
+        }, {
+          "description" : "Routes /api/orders/**",
+          "destinationId" : "14",
+          "id" : "48",
+          "sourceId" : "9",
+          "tags" : "Relationship",
+          "technology" : "HTTP"
+        }, {
+          "description" : "Routes /api/payments/**",
+          "destinationId" : "28",
+          "id" : "49",
+          "sourceId" : "9",
+          "tags" : "Relationship",
+          "technology" : "HTTP"
+        }, {
+          "description" : "Routes /gateway/notifications/**",
+          "destinationId" : "29",
+          "id" : "50",
+          "sourceId" : "9",
+          "tags" : "Relationship",
+          "technology" : "HTTP"
+        }, {
+          "description" : "Validates JWT on protected routes",
+          "destinationId" : "3",
+          "id" : "52",
+          "sourceId" : "9",
+          "tags" : "Relationship",
+          "technology" : "HTTPS · JWKS"
+        }, {
+          "description" : "HTTP verbs",
+          "destinationId" : "15",
+          "id" : "69",
+          "sourceId" : "9",
+          "tags" : "Relationship",
+          "technology" : "REST/JSON · JWT Bearer"
+        } ],
+        "tags" : "Element,Container,Service",
+        "technology" : "Ocelot 23.4 · .NET 9 · port 9090"
+      }, {
+        "description" : "Keycloak proxy. Login, register, token refresh, /me, admin user list, role assignment.",
+        "documentation" : { },
+        "id" : "10",
+        "name" : "AK.UserIdentity",
+        "properties" : {
+          "structurizr.dsl.identifier" : "antkart.identity"
+        },
+        "relationships" : [ {
+          "description" : "Token issue, user CRUD, role assignment",
+          "destinationId" : "3",
+          "id" : "51",
+          "sourceId" : "10",
+          "tags" : "Relationship",
+          "technology" : "HTTPS · Keycloak Admin API"
+        }, {
+          "description" : "Publishes: UserRegistered",
+          "destinationId" : "7",
+          "id" : "64",
+          "sourceId" : "10",
+          "tags" : "Relationship",
+          "technology" : "AMQP · MassTransit"
+        } ],
+        "tags" : "Element,Container,Service",
+        "technology" : "Minimal API · .NET 9 · port 8084"
+      }, {
+        "description" : "Product catalogue. CRUD with category filtering. Calls Discount via gRPC. Consumes OrderCreated to reserve stock.",
+        "documentation" : { },
+        "id" : "11",
+        "name" : "AK.Products",
+        "properties" : {
+          "structurizr.dsl.identifier" : "antkart.products"
+        },
+        "relationships" : [ {
+          "description" : "GetDiscount(sku)",
+          "destinationId" : "12",
+          "id" : "53",
+          "sourceId" : "11",
+          "tags" : "Relationship",
+          "technology" : "gRPC · proto3"
+        }, {
+          "description" : "CRUD products",
+          "destinationId" : "30",
+          "id" : "54",
+          "sourceId" : "11",
+          "tags" : "Relationship",
+          "technology" : "MongoDB.Driver 3.3"
+        } ],
+        "tags" : "Element,Container,Service",
+        "technology" : "Minimal API · .NET 9 · port 8080"
+      }, {
+        "description" : "Discount coupon service. Exposes GetDiscount RPC. 300 seed coupons keyed by SKU.",
+        "documentation" : { },
+        "id" : "12",
+        "name" : "AK.Discount",
+        "properties" : {
+          "structurizr.dsl.identifier" : "antkart.discount"
+        },
+        "relationships" : [ {
+          "description" : "CRUD coupons",
+          "destinationId" : "31",
+          "id" : "55",
+          "sourceId" : "12",
+          "tags" : "Relationship",
+          "technology" : "EF Core 9"
+        } ],
+        "tags" : "Element,Container,Service",
+        "technology" : "gRPC · .NET 9 · port 8081"
+      }, {
+        "description" : "Shopping cart. Add, update, remove, clear. JSON snapshots in Redis with 30-day TTL.",
+        "documentation" : { },
+        "id" : "13",
+        "name" : "AK.ShoppingCart",
+        "properties" : {
+          "structurizr.dsl.identifier" : "antkart.cart"
+        },
+        "relationships" : [ {
+          "description" : "Get/Set cart snapshots",
+          "destinationId" : "32",
+          "id" : "56",
+          "sourceId" : "13",
+          "tags" : "Relationship",
+          "technology" : "StackExchange.Redis"
+        } ],
+        "tags" : "Element,Container,Service",
+        "technology" : "Minimal API · .NET 9 · port 8082"
+      }, {
+        "components" : [ {
+          "description" : "Maps HTTP verbs to MediatR Send() calls. UserId from JWT sub claim. Admin-only on PUT /status.",
+          "documentation" : { },
+          "id" : "15",
+          "name" : "OrderEndpoints",
+          "properties" : {
+            "structurizr.dsl.identifier" : "antkart.order.endpoints"
+          },
+          "relationships" : [ {
+            "description" : "Send(command | query)",
+            "destinationId" : "17",
+            "id" : "70",
+            "sourceId" : "15",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "Minimal API · MapGroup"
+        }, {
+          "description" : "ValidationException→400, KeyNotFound→404, InvalidOp→409, Exception→500",
+          "documentation" : { },
+          "id" : "16",
+          "name" : "ExceptionHandlerMiddleware",
+          "properties" : {
+            "structurizr.dsl.identifier" : "antkart.order.middleware"
+          },
+          "tags" : "Element,Component",
+          "technology" : "ASP.NET Middleware"
+        }, {
+          "description" : "Dispatches IRequest to exactly one handler. Runs ValidationBehavior pipeline.",
+          "documentation" : { },
+          "id" : "17",
+          "name" : "MediatR",
+          "properties" : {
+            "structurizr.dsl.identifier" : "antkart.order.mediator_comp"
+          },
+          "relationships" : [ {
+            "description" : "Pipeline step",
+            "destinationId" : "18",
+            "id" : "71",
+            "sourceId" : "17",
+            "tags" : "Relationship"
+          }, {
+            "description" : "CreateOrderCommand",
+            "destinationId" : "19",
+            "id" : "72",
+            "sourceId" : "17",
+            "tags" : "Relationship"
+          }, {
+            "description" : "UpdateOrderStatusCommand",
+            "destinationId" : "20",
+            "id" : "73",
+            "sourceId" : "17",
+            "tags" : "Relationship"
+          }, {
+            "description" : "CancelOrderCommand",
+            "destinationId" : "21",
+            "id" : "74",
+            "sourceId" : "17",
+            "tags" : "Relationship"
+          }, {
+            "description" : "Queries",
+            "destinationId" : "22",
+            "id" : "75",
+            "sourceId" : "17",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "In-process command bus"
+        }, {
+          "description" : "Pre-handler FluentValidation. Throws ValidationException → 400.",
+          "documentation" : { },
+          "id" : "18",
+          "name" : "ValidationBehavior",
+          "properties" : {
+            "structurizr.dsl.identifier" : "antkart.order.validation"
+          },
+          "tags" : "Element,Component",
+          "technology" : "MediatR Pipeline Behavior"
+        }, {
+          "description" : "Creates Order aggregate. Outbox publishes OrderCreatedIntegrationEvent.",
+          "documentation" : { },
+          "id" : "19",
+          "name" : "CreateOrderCommandHandler",
+          "properties" : {
+            "structurizr.dsl.identifier" : "antkart.order.create_cmd"
+          },
+          "relationships" : [ {
+            "description" : "AddAsync + SaveChangesAsync",
+            "destinationId" : "26",
+            "id" : "76",
+            "sourceId" : "19",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "Command Handler"
+        }, {
+          "description" : "Returns Result<OrderDto>. Domain state machine enforces transitions.",
+          "documentation" : { },
+          "id" : "20",
+          "name" : "UpdateOrderStatusCommandHandler",
+          "properties" : {
+            "structurizr.dsl.identifier" : "antkart.order.update_cmd"
+          },
+          "relationships" : [ {
+            "description" : "UpdateAsync + SaveChangesAsync",
+            "destinationId" : "26",
+            "id" : "77",
+            "sourceId" : "20",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "Command Handler · Result<T>"
+        }, {
+          "description" : "Returns Result<bool>. Publishes OrderCancelledIntegrationEvent.",
+          "documentation" : { },
+          "id" : "21",
+          "name" : "CancelOrderCommandHandler",
+          "properties" : {
+            "structurizr.dsl.identifier" : "antkart.order.cancel_cmd"
+          },
+          "relationships" : [ {
+            "description" : "UpdateAsync + SaveChangesAsync",
+            "destinationId" : "26",
+            "id" : "78",
+            "sourceId" : "21",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "Command Handler · Result<T>"
+        }, {
+          "description" : "GetOrderById, GetOrders, GetOrdersByUser. Specification pattern for filters.",
+          "documentation" : { },
+          "id" : "22",
+          "name" : "Query Handlers",
+          "properties" : {
+            "structurizr.dsl.identifier" : "antkart.order.get_queries"
+          },
+          "relationships" : [ {
+            "description" : "GetByIdAsync · FindAsync(spec)",
+            "destinationId" : "25",
+            "id" : "79",
+            "sourceId" : "22",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "Query Handlers"
+        }, {
+          "description" : "States: Initial → StockPending → Confirmed|Cancelled. Persisted to PostgreSQL.",
+          "documentation" : { },
+          "id" : "23",
+          "name" : "OrderSaga",
+          "properties" : {
+            "structurizr.dsl.identifier" : "antkart.order.saga"
+          },
+          "relationships" : [ {
+            "description" : "Reads/writes SAGA state",
+            "destinationId" : "27",
+            "id" : "85",
+            "sourceId" : "23",
+            "tags" : "Relationship"
+          }, {
+            "description" : "Publishes OrderConfirmed/OrderCancelled",
+            "destinationId" : "7",
+            "id" : "86",
+            "sourceId" : "23",
+            "tags" : "Relationship",
+            "technology" : "AMQP"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "MassTransit StateMachine"
+        }, {
+          "description" : "PaymentSucceeded, PaymentFailed, OrderConfirmed, OrderCancelled consumers.",
+          "documentation" : { },
+          "id" : "24",
+          "name" : "Event Consumers",
+          "properties" : {
+            "structurizr.dsl.identifier" : "antkart.order.consumers"
+          },
+          "relationships" : [ {
+            "description" : "Send(UpdateOrderStatusCommand)",
+            "destinationId" : "17",
+            "id" : "88",
+            "sourceId" : "24",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "MassTransit Consumers"
+        }, {
+          "description" : "EF Core IQueryable. GetByIdAsync, FindAsync with ISpecification.",
+          "documentation" : { },
+          "id" : "25",
+          "name" : "OrderRepository",
+          "properties" : {
+            "structurizr.dsl.identifier" : "antkart.order.repo"
+          },
+          "relationships" : [ {
+            "description" : "EF Core queries",
+            "destinationId" : "27",
+            "id" : "80",
+            "sourceId" : "25",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "Repository Pattern"
+        }, {
+          "description" : "SaveChangesAsync dispatches domain events via Outbox. Atomic: row + outbox.",
+          "documentation" : { },
+          "id" : "26",
+          "name" : "UnitOfWork",
+          "properties" : {
+            "structurizr.dsl.identifier" : "antkart.order.uow"
+          },
+          "relationships" : [ {
+            "description" : "SaveChangesAsync + Outbox enqueue",
+            "destinationId" : "27",
+            "id" : "81",
+            "sourceId" : "26",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "Unit of Work"
+        }, {
+          "description" : "Orders, OrderItems, SAGA state, Outbox tables. Fluent API config.",
+          "documentation" : { },
+          "id" : "27",
+          "name" : "OrderDbContext",
+          "properties" : {
+            "structurizr.dsl.identifier" : "antkart.order.dbctx"
+          },
+          "relationships" : [ {
+            "description" : "SQL via Npgsql",
+            "destinationId" : "33",
+            "id" : "82",
+            "sourceId" : "27",
+            "tags" : "Relationship"
+          }, {
+            "description" : "Outbox relay forwards events",
+            "destinationId" : "7",
+            "id" : "83",
+            "sourceId" : "27",
+            "tags" : "Relationship",
+            "technology" : "AMQP"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "EF Core 9 DbContext"
+        } ],
+        "description" : "Order lifecycle. SAGA for stock reservation + payment. CQRS + MediatR. EF Core Outbox.",
+        "documentation" : { },
+        "id" : "14",
+        "name" : "AK.Order",
+        "properties" : {
+          "structurizr.dsl.identifier" : "antkart.order"
+        },
+        "relationships" : [ {
+          "description" : "CRUD orders · SAGA · Outbox",
+          "destinationId" : "33",
+          "id" : "57",
+          "sourceId" : "14",
+          "tags" : "Relationship",
+          "technology" : "EF Core 9 · Npgsql"
+        }, {
+          "description" : "Publishes: OrderCreated, OrderConfirmed, OrderCancelled",
+          "destinationId" : "7",
+          "id" : "62",
+          "sourceId" : "14",
+          "tags" : "Relationship",
+          "technology" : "AMQP · MassTransit Outbox"
+        } ],
+        "tags" : "Element,Container,Service",
+        "technology" : "Minimal API · .NET 9 · port 8083"
+      }, {
+        "description" : "Payment processing. Razorpay orders, HMAC-SHA256 verification, saved cards (token IDs only).",
+        "documentation" : { },
+        "id" : "28",
+        "name" : "AK.Payments",
+        "properties" : {
+          "structurizr.dsl.identifier" : "antkart.payments"
+        },
+        "relationships" : [ {
+          "description" : "CRUD payments · saved cards",
+          "destinationId" : "34",
+          "id" : "58",
+          "sourceId" : "28",
+          "tags" : "Relationship",
+          "technology" : "EF Core 9 · Npgsql"
+        }, {
+          "description" : "Create order, verify signature",
+          "destinationId" : "4",
+          "id" : "60",
+          "sourceId" : "28",
+          "tags" : "Relationship",
+          "technology" : "HTTPS · Razorpay SDK"
+        }, {
+          "description" : "Publishes: PaymentInitiated, PaymentSucceeded, PaymentFailed",
+          "destinationId" : "7",
+          "id" : "63",
+          "sourceId" : "28",
+          "tags" : "Relationship",
+          "technology" : "AMQP · MassTransit"
+        } ],
+        "tags" : "Element,Container,Service",
+        "technology" : "Minimal API · .NET 9 · port 8085"
+      }, {
+        "description" : "Event-driven emails. 6 consumers, HTML templates, MailKit dispatch. 90-day cleanup.",
+        "documentation" : { },
+        "id" : "29",
+        "name" : "AK.Notification",
+        "properties" : {
+          "structurizr.dsl.identifier" : "antkart.notification"
+        },
+        "relationships" : [ {
+          "description" : "Persist notifications",
+          "destinationId" : "35",
+          "id" : "59",
+          "sourceId" : "29",
+          "tags" : "Relationship",
+          "technology" : "EF Core 9 · Npgsql"
+        }, {
+          "description" : "Send HTML emails",
+          "destinationId" : "5",
+          "id" : "61",
+          "sourceId" : "29",
+          "tags" : "Relationship",
+          "technology" : "SMTP · MailKit"
+        } ],
+        "tags" : "Element,Container,Service",
+        "technology" : "Minimal API · .NET 9 · port 8086"
+      }, {
+        "description" : "Document store for product catalogue. StringEntity IDs.",
+        "documentation" : { },
+        "id" : "30",
+        "name" : "MongoDB",
+        "properties" : {
+          "structurizr.dsl.identifier" : "antkart.mongodb"
+        },
+        "tags" : "Element,Container,Database",
+        "technology" : "AKProductsDb"
+      }, {
+        "description" : "Relational store for coupon records. EF Core migrations.",
+        "documentation" : { },
+        "id" : "31",
+        "name" : "SQLite",
+        "properties" : {
+          "structurizr.dsl.identifier" : "antkart.sqlite"
+        },
+        "tags" : "Element,Container,Database",
+        "technology" : "discount.db"
+      }, {
+        "description" : "In-memory key-value store. One key per user cart. 30-day TTL.",
+        "documentation" : { },
+        "id" : "32",
+        "name" : "Redis",
+        "properties" : {
+          "structurizr.dsl.identifier" : "antkart.redis"
+        },
+        "tags" : "Element,Container,Database",
+        "technology" : "AKCart"
+      }, {
+        "description" : "Orders, items, SAGA state, Outbox messages.",
+        "documentation" : { },
+        "id" : "33",
+        "name" : "PostgreSQL (Orders)",
+        "properties" : {
+          "structurizr.dsl.identifier" : "antkart.pg_orders"
+        },
+        "tags" : "Element,Container,Database",
+        "technology" : "AKOrdersDb · EF Core 9 · Npgsql"
+      }, {
+        "description" : "Payment records and saved card tokens.",
+        "documentation" : { },
+        "id" : "34",
+        "name" : "PostgreSQL (Payments)",
+        "properties" : {
+          "structurizr.dsl.identifier" : "antkart.pg_payments"
+        },
+        "tags" : "Element,Container,Database",
+        "technology" : "AKPaymentsDb · EF Core 9 · Npgsql"
+      }, {
+        "description" : "Notification delivery history.",
+        "documentation" : { },
+        "id" : "35",
+        "name" : "PostgreSQL (Notifications)",
+        "properties" : {
+          "structurizr.dsl.identifier" : "antkart.pg_notifications"
+        },
+        "tags" : "Element,Container,Database",
+        "technology" : "AKNotificationsDb · EF Core 9 · Npgsql"
+      } ],
+      "description" : "Cloud-native .NET 9 microservices e-commerce platform with 8 services, SAGA orchestration, CQRS, and event-driven architecture.",
+      "documentation" : { },
+      "id" : "8",
+      "name" : "AntKart Platform",
+      "properties" : {
+        "structurizr.dsl.identifier" : "antkart"
+      },
+      "relationships" : [ {
+        "description" : "Authenticates via OIDC",
+        "destinationId" : "3",
+        "id" : "38",
+        "sourceId" : "8",
+        "tags" : "Relationship",
+        "technology" : "HTTPS"
+      }, {
+        "description" : "Initiates payments, verifies signatures",
+        "destinationId" : "4",
+        "id" : "39",
+        "sourceId" : "8",
+        "tags" : "Relationship",
+        "technology" : "HTTPS · REST"
+      }, {
+        "description" : "Sends transactional emails",
+        "destinationId" : "5",
+        "id" : "40",
+        "sourceId" : "8",
+        "tags" : "Relationship",
+        "technology" : "SMTP · MailKit"
+      }, {
+        "description" : "Ships structured JSON logs",
+        "destinationId" : "6",
+        "id" : "41",
+        "sourceId" : "8",
+        "tags" : "Relationship",
+        "technology" : "HTTP · Serilog"
+      }, {
+        "description" : "Publishes/consumes integration events",
+        "destinationId" : "7",
+        "id" : "42",
+        "sourceId" : "8",
+        "tags" : "Relationship",
+        "technology" : "AMQP · MassTransit"
+      } ],
+      "tags" : "Element,Software System"
+    } ]
+  },
+  "name" : "AntKart",
+  "properties" : {
+    "structurizr.inspection.error" : "19",
+    "structurizr.dsl" : "LyoKICogQW50S2FydCDigJQgQzQgQXJjaGl0ZWN0dXJlIChTdHJ1Y3R1cml6ciBEU0wpCiAqCiAqIEhvdyB0byB1c2U6CiAqICAgT3B0aW9uIEEgKHF1aWNrZXN0KTogUGFzdGUgdGhpcyBpbnRvIGh0dHBzOi8vc3RydWN0dXJpenIuY29tL2RzbCDigJQgcmVuZGVycyBpbnN0YW50bHkgaW4gYnJvd3NlcgogKiAgIE9wdGlvbiBCIChsb2NhbCk6ICAgIGRvY2tlciBydW4gLWl0IC0tcm0gLXAgODA4MDo4MDgwIC12IC4vZG9jcy9hcmNoaXRlY3R1cmU6L3Vzci9sb2NhbC9zdHJ1Y3R1cml6ciBzdHJ1Y3R1cml6ci9saXRlCiAqICAgICAgICAgICAgICAgICAgICAgICAgT3BlbiBodHRwOi8vbG9jYWxob3N0OjgwODAg4oCUIGxpdmUgcmVsb2FkIG9uIHNhdmUKICogICBPcHRpb24gQyAoZXhwb3J0KTogICBzdHJ1Y3R1cml6ci1jbGkgZXhwb3J0IC13b3Jrc3BhY2Ugd29ya3NwYWNlLmRzbCAtZm9ybWF0IHBsYW50dW1sfHBuZ3xtZXJtYWlkCiAqCiAqIFN0cnVjdHVyaXpyIHJlbmRlcnMgcHJvcGVyIEM0IGRpYWdyYW1zIHdpdGg6CiAqICAgLSBDb2xvci1jb2RlZCBib3hlcyAoUGVyc29uPWJsdWUsIFN5c3RlbT1ncmV5LCBDb250YWluZXI9Ymx1ZSwgREI9Z3JlZW4sIEV4dGVybmFsPWdyZXktZGFzaGVkKQogKiAgIC0gQXV0by1sYXlvdXQgdGhhdCBkb2Vzbid0IG92ZXJsYXAKICogICAtIENsaWNrYWJsZSB6b29tOiBDb250ZXh0IOKGkiBDb250YWluZXIg4oaSIENvbXBvbmVudAogKiAgIC0gTXVsdGlwbGUgdmlld3MgZnJvbSBPTkUgbW9kZWwgKG5vIGR1cGxpY2F0aW9uKQogKi8KCndvcmtzcGFjZSAiQW50S2FydCIgIkNsb3VkLW5hdGl2ZSAuTkVUIDkgbWljcm9zZXJ2aWNlcyBlLWNvbW1lcmNlIHBsYXRmb3JtIiB7CgogICAgIWlkZW50aWZpZXJzIGhpZXJhcmNoaWNhbAoKICAgIG1vZGVsIHsKCiAgICAgICAgLy8g4pSA4pSAIFBlb3BsZSDilIDilIAKICAgICAgICBjdXN0b21lciA9IHBlcnNvbiAiQ3VzdG9tZXIiICJCcm93c2VzIHByb2R1Y3RzLCBtYW5hZ2VzIGNhcnQsIHBsYWNlcyBvcmRlcnMsIHBheXMiIHsKICAgICAgICAgICAgdGFncyAiUGVyc29uIgogICAgICAgIH0KICAgICAgICBhZG1pbiA9IHBlcnNvbiAiQWRtaW5pc3RyYXRvciIgIk1hbmFnZXMgcHJvZHVjdCBjYXRhbG9ndWUsIG1vbml0b3JzIG9yZGVycywgYXNzaWducyByb2xlcyIgewogICAgICAgICAgICB0YWdzICJQZXJzb24iCiAgICAgICAgfQoKICAgICAgICAvLyDilIDilIAgRXh0ZXJuYWwgU3lzdGVtcyDilIDilIAKICAgICAgICBrZXljbG9hayA9IHNvZnR3YXJlU3lzdGVtICJLZXljbG9hayAyNCIgIk9wZW4tc291cmNlIGlkZW50aXR5IHByb3ZpZGVyLiBIb3N0cyB0aGUgYW50a2FydCByZWFsbSB3aXRoIHVzZXIvYWRtaW4gcm9sZXMuIElzc3VlcyBKV1QgdG9rZW5zLiIgewogICAgICAgICAgICB0YWdzICJFeHRlcm5hbCIKICAgICAgICB9CiAgICAgICAgcmF6b3JwYXkgPSBzb2Z0d2FyZVN5c3RlbSAiUmF6b3JwYXkiICJQYXltZW50IGdhdGV3YXkuIENyZWF0ZXMgb3JkZXIgb2JqZWN0cywgcHJvY2Vzc2VzIGNhcmQgcGF5bWVudHMsIHJldHVybnMgSE1BQy1TSEEyNTYgc2lnbmF0dXJlcy4iIHsKICAgICAgICAgICAgdGFncyAiRXh0ZXJuYWwiCiAgICAgICAgfQogICAgICAgIHNtdHAgPSBzb2Z0d2FyZVN5c3RlbSAiU01UUCAvIE1haWxob2ciICJFbWFpbCBkZWxpdmVyeS4gTWFpbGhvZyBTTVRQIHRyYXAgaW4gZGV2OyBHbWFpbCBTTVRQIGluIHByb2R1Y3Rpb24uIiB7CiAgICAgICAgICAgIHRhZ3MgIkV4dGVybmFsIgogICAgICAgIH0KICAgICAgICBlbGsgPSBzb2Z0d2FyZVN5c3RlbSAiRUxLIFN0YWNrIiAiT2JzZXJ2YWJpbGl0eS4gRWxhc3RpY3NlYXJjaCBzdG9yZXMgc3RydWN0dXJlZCBKU09OIGxvZ3MuIEtpYmFuYSBwcm92aWRlcyBkYXNoYm9hcmRzLiIgewogICAgICAgICAgICB0YWdzICJFeHRlcm5hbCIKICAgICAgICB9CiAgICAgICAgcmFiYml0bXEgPSBzb2Z0d2FyZVN5c3RlbSAiUmFiYml0TVEgMyIgIkFNUVAgbWVzc2FnZSBicm9rZXIuIEZhbnMgb3V0IGludGVncmF0aW9uIGV2ZW50cy4gSG9zdHMgU0FHQSBzdGF0ZSBtYWNoaW5lIHF1ZXVlcy4iIHsKICAgICAgICAgICAgdGFncyAiRXh0ZXJuYWwiCiAgICAgICAgfQoKICAgICAgICAvLyDilIDilIAgQW50S2FydCBQbGF0Zm9ybSDilIDilIAKICAgICAgICBhbnRrYXJ0ID0gc29mdHdhcmVTeXN0ZW0gIkFudEthcnQgUGxhdGZvcm0iICJDbG91ZC1uYXRpdmUgLk5FVCA5IG1pY3Jvc2VydmljZXMgZS1jb21tZXJjZSBwbGF0Zm9ybSB3aXRoIDggc2VydmljZXMsIFNBR0Egb3JjaGVzdHJhdGlvbiwgQ1FSUywgYW5kIGV2ZW50LWRyaXZlbiBhcmNoaXRlY3R1cmUuIiB7CgogICAgICAgICAgICAvLyDilIDilIAgQ29udGFpbmVycyDilIDilIAKICAgICAgICAgICAgZ2F0ZXdheSA9IGNvbnRhaW5lciAiQUsuR2F0ZXdheSIgIlNpbmdsZSBlbnRyeSBwb2ludC4gSldUIHBhc3N0aHJvdWdoLCBwZXItcm91dGUgcmF0ZSBsaW1pdGluZyAoMTAtMzAgUlBTKSwgUW9TIGNpcmN1aXQgYnJlYWtlci4iICJPY2Vsb3QgMjMuNCDCtyAuTkVUIDkgwrcgcG9ydCA5MDkwIiB7CiAgICAgICAgICAgICAgICB0YWdzICJTZXJ2aWNlIgogICAgICAgICAgICB9CgogICAgICAgICAgICBpZGVudGl0eSA9IGNvbnRhaW5lciAiQUsuVXNlcklkZW50aXR5IiAiS2V5Y2xvYWsgcHJveHkuIExvZ2luLCByZWdpc3RlciwgdG9rZW4gcmVmcmVzaCwgL21lLCBhZG1pbiB1c2VyIGxpc3QsIHJvbGUgYXNzaWdubWVudC4iICJNaW5pbWFsIEFQSSDCtyAuTkVUIDkgwrcgcG9ydCA4MDg0IiB7CiAgICAgICAgICAgICAgICB0YWdzICJTZXJ2aWNlIgogICAgICAgICAgICB9CgogICAgICAgICAgICBwcm9kdWN0cyA9IGNvbnRhaW5lciAiQUsuUHJvZHVjdHMiICJQcm9kdWN0IGNhdGFsb2d1ZS4gQ1JVRCB3aXRoIGNhdGVnb3J5IGZpbHRlcmluZy4gQ2FsbHMgRGlzY291bnQgdmlhIGdSUEMuIENvbnN1bWVzIE9yZGVyQ3JlYXRlZCB0byByZXNlcnZlIHN0b2NrLiIgIk1pbmltYWwgQVBJIMK3IC5ORVQgOSDCtyBwb3J0IDgwODAiIHsKICAgICAgICAgICAgICAgIHRhZ3MgIlNlcnZpY2UiCiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIGRpc2NvdW50ID0gY29udGFpbmVyICJBSy5EaXNjb3VudCIgIkRpc2NvdW50IGNvdXBvbiBzZXJ2aWNlLiBFeHBvc2VzIEdldERpc2NvdW50IFJQQy4gMzAwIHNlZWQgY291cG9ucyBrZXllZCBieSBTS1UuIiAiZ1JQQyDCtyAuTkVUIDkgwrcgcG9ydCA4MDgxIiB7CiAgICAgICAgICAgICAgICB0YWdzICJTZXJ2aWNlIgogICAgICAgICAgICB9CgogICAgICAgICAgICBjYXJ0ID0gY29udGFpbmVyICJBSy5TaG9wcGluZ0NhcnQiICJTaG9wcGluZyBjYXJ0LiBBZGQsIHVwZGF0ZSwgcmVtb3ZlLCBjbGVhci4gSlNPTiBzbmFwc2hvdHMgaW4gUmVkaXMgd2l0aCAzMC1kYXkgVFRMLiIgIk1pbmltYWwgQVBJIMK3IC5ORVQgOSDCtyBwb3J0IDgwODIiIHsKICAgICAgICAgICAgICAgIHRhZ3MgIlNlcnZpY2UiCiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIG9yZGVyID0gY29udGFpbmVyICJBSy5PcmRlciIgIk9yZGVyIGxpZmVjeWNsZS4gU0FHQSBmb3Igc3RvY2sgcmVzZXJ2YXRpb24gKyBwYXltZW50LiBDUVJTICsgTWVkaWF0Ui4gRUYgQ29yZSBPdXRib3guIiAiTWluaW1hbCBBUEkgwrcgLk5FVCA5IMK3IHBvcnQgODA4MyIgewogICAgICAgICAgICAgICAgdGFncyAiU2VydmljZSIKCiAgICAgICAgICAgICAgICAvLyDilIDilIAgTGV2ZWwgMzogQ29tcG9uZW50cyBpbnNpZGUgQUsuT3JkZXIg4pSA4pSACiAgICAgICAgICAgICAgICBlbmRwb2ludHMgPSBjb21wb25lbnQgIk9yZGVyRW5kcG9pbnRzIiAiTWFwcyBIVFRQIHZlcmJzIHRvIE1lZGlhdFIgU2VuZCgpIGNhbGxzLiBVc2VySWQgZnJvbSBKV1Qgc3ViIGNsYWltLiBBZG1pbi1vbmx5IG9uIFBVVCAvc3RhdHVzLiIgIk1pbmltYWwgQVBJIMK3IE1hcEdyb3VwIgogICAgICAgICAgICAgICAgbWlkZGxld2FyZSA9IGNvbXBvbmVudCAiRXhjZXB0aW9uSGFuZGxlck1pZGRsZXdhcmUiICJWYWxpZGF0aW9uRXhjZXB0aW9u4oaSNDAwLCBLZXlOb3RGb3VuZOKGkjQwNCwgSW52YWxpZE9w4oaSNDA5LCBFeGNlcHRpb27ihpI1MDAiICJBU1AuTkVUIE1pZGRsZXdhcmUiCiAgICAgICAgICAgICAgICBtZWRpYXRvcl9jb21wID0gY29tcG9uZW50ICJNZWRpYXRSIiAiRGlzcGF0Y2hlcyBJUmVxdWVzdCB0byBleGFjdGx5IG9uZSBoYW5kbGVyLiBSdW5zIFZhbGlkYXRpb25CZWhhdmlvciBwaXBlbGluZS4iICJJbi1wcm9jZXNzIGNvbW1hbmQgYnVzIgogICAgICAgICAgICAgICAgdmFsaWRhdGlvbiA9IGNvbXBvbmVudCAiVmFsaWRhdGlvbkJlaGF2aW9yIiAiUHJlLWhhbmRsZXIgRmx1ZW50VmFsaWRhdGlvbi4gVGhyb3dzIFZhbGlkYXRpb25FeGNlcHRpb24g4oaSIDQwMC4iICJNZWRpYXRSIFBpcGVsaW5lIEJlaGF2aW9yIgogICAgICAgICAgICAgICAgY3JlYXRlX2NtZCA9IGNvbXBvbmVudCAiQ3JlYXRlT3JkZXJDb21tYW5kSGFuZGxlciIgIkNyZWF0ZXMgT3JkZXIgYWdncmVnYXRlLiBPdXRib3ggcHVibGlzaGVzIE9yZGVyQ3JlYXRlZEludGVncmF0aW9uRXZlbnQuIiAiQ29tbWFuZCBIYW5kbGVyIgogICAgICAgICAgICAgICAgdXBkYXRlX2NtZCA9IGNvbXBvbmVudCAiVXBkYXRlT3JkZXJTdGF0dXNDb21tYW5kSGFuZGxlciIgIlJldHVybnMgUmVzdWx0PE9yZGVyRHRvPi4gRG9tYWluIHN0YXRlIG1hY2hpbmUgZW5mb3JjZXMgdHJhbnNpdGlvbnMuIiAiQ29tbWFuZCBIYW5kbGVyIMK3IFJlc3VsdDxUPiIKICAgICAgICAgICAgICAgIGNhbmNlbF9jbWQgPSBjb21wb25lbnQgIkNhbmNlbE9yZGVyQ29tbWFuZEhhbmRsZXIiICJSZXR1cm5zIFJlc3VsdDxib29sPi4gUHVibGlzaGVzIE9yZGVyQ2FuY2VsbGVkSW50ZWdyYXRpb25FdmVudC4iICJDb21tYW5kIEhhbmRsZXIgwrcgUmVzdWx0PFQ+IgogICAgICAgICAgICAgICAgZ2V0X3F1ZXJpZXMgPSBjb21wb25lbnQgIlF1ZXJ5IEhhbmRsZXJzIiAiR2V0T3JkZXJCeUlkLCBHZXRPcmRlcnMsIEdldE9yZGVyc0J5VXNlci4gU3BlY2lmaWNhdGlvbiBwYXR0ZXJuIGZvciBmaWx0ZXJzLiIgIlF1ZXJ5IEhhbmRsZXJzIgogICAgICAgICAgICAgICAgc2FnYSA9IGNvbXBvbmVudCAiT3JkZXJTYWdhIiAiU3RhdGVzOiBJbml0aWFsIOKGkiBTdG9ja1BlbmRpbmcg4oaSIENvbmZpcm1lZHxDYW5jZWxsZWQuIFBlcnNpc3RlZCB0byBQb3N0Z3JlU1FMLiIgIk1hc3NUcmFuc2l0IFN0YXRlTWFjaGluZSIKICAgICAgICAgICAgICAgIGNvbnN1bWVycyA9IGNvbXBvbmVudCAiRXZlbnQgQ29uc3VtZXJzIiAiUGF5bWVudFN1Y2NlZWRlZCwgUGF5bWVudEZhaWxlZCwgT3JkZXJDb25maXJtZWQsIE9yZGVyQ2FuY2VsbGVkIGNvbnN1bWVycy4iICJNYXNzVHJhbnNpdCBDb25zdW1lcnMiCiAgICAgICAgICAgICAgICByZXBvID0gY29tcG9uZW50ICJPcmRlclJlcG9zaXRvcnkiICJFRiBDb3JlIElRdWVyeWFibGUuIEdldEJ5SWRBc3luYywgRmluZEFzeW5jIHdpdGggSVNwZWNpZmljYXRpb24uIiAiUmVwb3NpdG9yeSBQYXR0ZXJuIgogICAgICAgICAgICAgICAgdW93ID0gY29tcG9uZW50ICJVbml0T2ZXb3JrIiAiU2F2ZUNoYW5nZXNBc3luYyBkaXNwYXRjaGVzIGRvbWFpbiBldmVudHMgdmlhIE91dGJveC4gQXRvbWljOiByb3cgKyBvdXRib3guIiAiVW5pdCBvZiBXb3JrIgogICAgICAgICAgICAgICAgZGJjdHggPSBjb21wb25lbnQgIk9yZGVyRGJDb250ZXh0IiAiT3JkZXJzLCBPcmRlckl0ZW1zLCBTQUdBIHN0YXRlLCBPdXRib3ggdGFibGVzLiBGbHVlbnQgQVBJIGNvbmZpZy4iICJFRiBDb3JlIDkgRGJDb250ZXh0IgogICAgICAgICAgICB9CgogICAgICAgICAgICBwYXltZW50cyA9IGNvbnRhaW5lciAiQUsuUGF5bWVudHMiICJQYXltZW50IHByb2Nlc3NpbmcuIFJhem9ycGF5IG9yZGVycywgSE1BQy1TSEEyNTYgdmVyaWZpY2F0aW9uLCBzYXZlZCBjYXJkcyAodG9rZW4gSURzIG9ubHkpLiIgIk1pbmltYWwgQVBJIMK3IC5ORVQgOSDCtyBwb3J0IDgwODUiIHsKICAgICAgICAgICAgICAgIHRhZ3MgIlNlcnZpY2UiCiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIG5vdGlmaWNhdGlvbiA9IGNvbnRhaW5lciAiQUsuTm90aWZpY2F0aW9uIiAiRXZlbnQtZHJpdmVuIGVtYWlscy4gNiBjb25zdW1lcnMsIEhUTUwgdGVtcGxhdGVzLCBNYWlsS2l0IGRpc3BhdGNoLiA5MC1kYXkgY2xlYW51cC4iICJNaW5pbWFsIEFQSSDCtyAuTkVUIDkgwrcgcG9ydCA4MDg2IiB7CiAgICAgICAgICAgICAgICB0YWdzICJTZXJ2aWNlIgogICAgICAgICAgICB9CgogICAgICAgICAgICAvLyDilIDilIAgRGF0YWJhc2VzIOKUgOKUgAogICAgICAgICAgICBtb25nb2RiID0gY29udGFpbmVyICJNb25nb0RCIiAiRG9jdW1lbnQgc3RvcmUgZm9yIHByb2R1Y3QgY2F0YWxvZ3VlLiBTdHJpbmdFbnRpdHkgSURzLiIgIkFLUHJvZHVjdHNEYiIgewogICAgICAgICAgICAgICAgdGFncyAiRGF0YWJhc2UiCiAgICAgICAgICAgIH0KICAgICAgICAgICAgc3FsaXRlID0gY29udGFpbmVyICJTUUxpdGUiICJSZWxhdGlvbmFsIHN0b3JlIGZvciBjb3Vwb24gcmVjb3Jkcy4gRUYgQ29yZSBtaWdyYXRpb25zLiIgImRpc2NvdW50LmRiIiB7CiAgICAgICAgICAgICAgICB0YWdzICJEYXRhYmFzZSIKICAgICAgICAgICAgfQogICAgICAgICAgICByZWRpcyA9IGNvbnRhaW5lciAiUmVkaXMiICJJbi1tZW1vcnkga2V5LXZhbHVlIHN0b3JlLiBPbmUga2V5IHBlciB1c2VyIGNhcnQuIDMwLWRheSBUVEwuIiAiQUtDYXJ0IiB7CiAgICAgICAgICAgICAgICB0YWdzICJEYXRhYmFzZSIKICAgICAgICAgICAgfQogICAgICAgICAgICBwZ19vcmRlcnMgPSBjb250YWluZXIgIlBvc3RncmVTUUwgKE9yZGVycykiICJPcmRlcnMsIGl0ZW1zLCBTQUdBIHN0YXRlLCBPdXRib3ggbWVzc2FnZXMuIiAiQUtPcmRlcnNEYiDCtyBFRiBDb3JlIDkgwrcgTnBnc3FsIiB7CiAgICAgICAgICAgICAgICB0YWdzICJEYXRhYmFzZSIKICAgICAgICAgICAgfQogICAgICAgICAgICBwZ19wYXltZW50cyA9IGNvbnRhaW5lciAiUG9zdGdyZVNRTCAoUGF5bWVudHMpIiAiUGF5bWVudCByZWNvcmRzIGFuZCBzYXZlZCBjYXJkIHRva2Vucy4iICJBS1BheW1lbnRzRGIgwrcgRUYgQ29yZSA5IMK3IE5wZ3NxbCIgewogICAgICAgICAgICAgICAgdGFncyAiRGF0YWJhc2UiCiAgICAgICAgICAgIH0KICAgICAgICAgICAgcGdfbm90aWZpY2F0aW9ucyA9IGNvbnRhaW5lciAiUG9zdGdyZVNRTCAoTm90aWZpY2F0aW9ucykiICJOb3RpZmljYXRpb24gZGVsaXZlcnkgaGlzdG9yeS4iICJBS05vdGlmaWNhdGlvbnNEYiDCtyBFRiBDb3JlIDkgwrcgTnBnc3FsIiB7CiAgICAgICAgICAgICAgICB0YWdzICJEYXRhYmFzZSIKICAgICAgICAgICAgfQogICAgICAgIH0KCiAgICAgICAgLy8g4pSA4pSAIExldmVsIDE6IFN5c3RlbSBDb250ZXh0IHJlbGF0aW9uc2hpcHMg4pSA4pSACiAgICAgICAgY3VzdG9tZXIgLT4gYW50a2FydCAiU2hvcHMsIHBsYWNlcyBvcmRlcnMsIHBheXMiICJIVFRQUyDCtyBSRVNUL0pTT04iCiAgICAgICAgYWRtaW4gLT4gYW50a2FydCAiTWFuYWdlcyBjYXRhbG9ndWUgYW5kIG9yZGVycyIgIkhUVFBTIMK3IFJFU1QvSlNPTiIKICAgICAgICBhbnRrYXJ0IC0+IGtleWNsb2FrICJBdXRoZW50aWNhdGVzIHZpYSBPSURDIiAiSFRUUFMiCiAgICAgICAgYW50a2FydCAtPiByYXpvcnBheSAiSW5pdGlhdGVzIHBheW1lbnRzLCB2ZXJpZmllcyBzaWduYXR1cmVzIiAiSFRUUFMgwrcgUkVTVCIKICAgICAgICBhbnRrYXJ0IC0+IHNtdHAgIlNlbmRzIHRyYW5zYWN0aW9uYWwgZW1haWxzIiAiU01UUCDCtyBNYWlsS2l0IgogICAgICAgIGFudGthcnQgLT4gZWxrICJTaGlwcyBzdHJ1Y3R1cmVkIEpTT04gbG9ncyIgIkhUVFAgwrcgU2VyaWxvZyIKICAgICAgICBhbnRrYXJ0IC0+IHJhYmJpdG1xICJQdWJsaXNoZXMvY29uc3VtZXMgaW50ZWdyYXRpb24gZXZlbnRzIiAiQU1RUCDCtyBNYXNzVHJhbnNpdCIKCiAgICAgICAgLy8g4pSA4pSAIExldmVsIDI6IENvbnRhaW5lciByZWxhdGlvbnNoaXBzIOKUgOKUgAogICAgICAgIGN1c3RvbWVyIC0+IGFudGthcnQuZ2F0ZXdheSAiQWxsIHJlcXVlc3RzIiAiSFRUUFMgwrcgcG9ydCA5MDkwIgogICAgICAgIGFkbWluIC0+IGFudGthcnQuZ2F0ZXdheSAiQWxsIGFkbWluIHJlcXVlc3RzIiAiSFRUUFMgwrcgcG9ydCA5MDkwIgoKICAgICAgICBhbnRrYXJ0LmdhdGV3YXkgLT4gYW50a2FydC5pZGVudGl0eSAiUm91dGVzIC9hcGkvYXV0aC8qKiDCtyAvYXBpL2FkbWluLyoqIiAiSFRUUCIKICAgICAgICBhbnRrYXJ0LmdhdGV3YXkgLT4gYW50a2FydC5wcm9kdWN0cyAiUm91dGVzIC9hcGkvdjEvcHJvZHVjdHMvKioiICJIVFRQIgogICAgICAgIGFudGthcnQuZ2F0ZXdheSAtPiBhbnRrYXJ0LmNhcnQgIlJvdXRlcyAvYXBpL3YxL2NhcnQvKioiICJIVFRQIgogICAgICAgIGFudGthcnQuZ2F0ZXdheSAtPiBhbnRrYXJ0Lm9yZGVyICJSb3V0ZXMgL2FwaS9vcmRlcnMvKioiICJIVFRQIgogICAgICAgIGFudGthcnQuZ2F0ZXdheSAtPiBhbnRrYXJ0LnBheW1lbnRzICJSb3V0ZXMgL2FwaS9wYXltZW50cy8qKiIgIkhUVFAiCiAgICAgICAgYW50a2FydC5nYXRld2F5IC0+IGFudGthcnQubm90aWZpY2F0aW9uICJSb3V0ZXMgL2dhdGV3YXkvbm90aWZpY2F0aW9ucy8qKiIgIkhUVFAiCgogICAgICAgIGFudGthcnQuaWRlbnRpdHkgLT4ga2V5Y2xvYWsgIlRva2VuIGlzc3VlLCB1c2VyIENSVUQsIHJvbGUgYXNzaWdubWVudCIgIkhUVFBTIMK3IEtleWNsb2FrIEFkbWluIEFQSSIKICAgICAgICBhbnRrYXJ0LmdhdGV3YXkgLT4ga2V5Y2xvYWsgIlZhbGlkYXRlcyBKV1Qgb24gcHJvdGVjdGVkIHJvdXRlcyIgIkhUVFBTIMK3IEpXS1MiCgogICAgICAgIGFudGthcnQucHJvZHVjdHMgLT4gYW50a2FydC5kaXNjb3VudCAiR2V0RGlzY291bnQoc2t1KSIgImdSUEMgwrcgcHJvdG8zIgogICAgICAgIGFudGthcnQucHJvZHVjdHMgLT4gYW50a2FydC5tb25nb2RiICJDUlVEIHByb2R1Y3RzIiAiTW9uZ29EQi5Ecml2ZXIgMy4zIgogICAgICAgIGFudGthcnQuZGlzY291bnQgLT4gYW50a2FydC5zcWxpdGUgIkNSVUQgY291cG9ucyIgIkVGIENvcmUgOSIKICAgICAgICBhbnRrYXJ0LmNhcnQgLT4gYW50a2FydC5yZWRpcyAiR2V0L1NldCBjYXJ0IHNuYXBzaG90cyIgIlN0YWNrRXhjaGFuZ2UuUmVkaXMiCiAgICAgICAgYW50a2FydC5vcmRlciAtPiBhbnRrYXJ0LnBnX29yZGVycyAiQ1JVRCBvcmRlcnMgwrcgU0FHQSDCtyBPdXRib3giICJFRiBDb3JlIDkgwrcgTnBnc3FsIgogICAgICAgIGFudGthcnQucGF5bWVudHMgLT4gYW50a2FydC5wZ19wYXltZW50cyAiQ1JVRCBwYXltZW50cyDCtyBzYXZlZCBjYXJkcyIgIkVGIENvcmUgOSDCtyBOcGdzcWwiCiAgICAgICAgYW50a2FydC5ub3RpZmljYXRpb24gLT4gYW50a2FydC5wZ19ub3RpZmljYXRpb25zICJQZXJzaXN0IG5vdGlmaWNhdGlvbnMiICJFRiBDb3JlIDkgwrcgTnBnc3FsIgoKICAgICAgICBhbnRrYXJ0LnBheW1lbnRzIC0+IHJhem9ycGF5ICJDcmVhdGUgb3JkZXIsIHZlcmlmeSBzaWduYXR1cmUiICJIVFRQUyDCtyBSYXpvcnBheSBTREsiCiAgICAgICAgYW50a2FydC5ub3RpZmljYXRpb24gLT4gc210cCAiU2VuZCBIVE1MIGVtYWlscyIgIlNNVFAgwrcgTWFpbEtpdCIKCiAgICAgICAgYW50a2FydC5vcmRlciAtPiByYWJiaXRtcSAiUHVibGlzaGVzOiBPcmRlckNyZWF0ZWQsIE9yZGVyQ29uZmlybWVkLCBPcmRlckNhbmNlbGxlZCIgIkFNUVAgwrcgTWFzc1RyYW5zaXQgT3V0Ym94IgogICAgICAgIGFudGthcnQucGF5bWVudHMgLT4gcmFiYml0bXEgIlB1Ymxpc2hlczogUGF5bWVudEluaXRpYXRlZCwgUGF5bWVudFN1Y2NlZWRlZCwgUGF5bWVudEZhaWxlZCIgIkFNUVAgwrcgTWFzc1RyYW5zaXQiCiAgICAgICAgYW50a2FydC5pZGVudGl0eSAtPiByYWJiaXRtcSAiUHVibGlzaGVzOiBVc2VyUmVnaXN0ZXJlZCIgIkFNUVAgwrcgTWFzc1RyYW5zaXQiCiAgICAgICAgcmFiYml0bXEgLT4gYW50a2FydC5wcm9kdWN0cyAiQ29uc3VtZXM6IE9yZGVyQ3JlYXRlZCDihpIgcmVzZXJ2ZSBzdG9jayIgIkFNUVAiCiAgICAgICAgcmFiYml0bXEgLT4gYW50a2FydC5vcmRlciAiQ29uc3VtZXM6IFN0b2NrUmVzZXJ2ZWQsIFN0b2NrRmFpbGVkLCBQYXltZW50U3VjY2VlZGVkLCBQYXltZW50RmFpbGVkIiAiQU1RUCDCtyBTQUdBICsgY29uc3VtZXJzIgogICAgICAgIHJhYmJpdG1xIC0+IGFudGthcnQubm90aWZpY2F0aW9uICJDb25zdW1lczogNiBpbnRlZ3JhdGlvbiBldmVudHMg4oaSIGVtYWlsIiAiQU1RUCIKCiAgICAgICAgLy8g4pSA4pSAIExldmVsIDM6IENvbXBvbmVudCByZWxhdGlvbnNoaXBzIChBSy5PcmRlcikg4pSA4pSACiAgICAgICAgYW50a2FydC5nYXRld2F5IC0+IGFudGthcnQub3JkZXIuZW5kcG9pbnRzICJIVFRQIHZlcmJzIiAiUkVTVC9KU09OIMK3IEpXVCBCZWFyZXIiCiAgICAgICAgYW50a2FydC5vcmRlci5lbmRwb2ludHMgLT4gYW50a2FydC5vcmRlci5tZWRpYXRvcl9jb21wICJTZW5kKGNvbW1hbmQgfCBxdWVyeSkiCiAgICAgICAgYW50a2FydC5vcmRlci5tZWRpYXRvcl9jb21wIC0+IGFudGthcnQub3JkZXIudmFsaWRhdGlvbiAiUGlwZWxpbmUgc3RlcCIKICAgICAgICBhbnRrYXJ0Lm9yZGVyLm1lZGlhdG9yX2NvbXAgLT4gYW50a2FydC5vcmRlci5jcmVhdGVfY21kICJDcmVhdGVPcmRlckNvbW1hbmQiCiAgICAgICAgYW50a2FydC5vcmRlci5tZWRpYXRvcl9jb21wIC0+IGFudGthcnQub3JkZXIudXBkYXRlX2NtZCAiVXBkYXRlT3JkZXJTdGF0dXNDb21tYW5kIgogICAgICAgIGFudGthcnQub3JkZXIubWVkaWF0b3JfY29tcCAtPiBhbnRrYXJ0Lm9yZGVyLmNhbmNlbF9jbWQgIkNhbmNlbE9yZGVyQ29tbWFuZCIKICAgICAgICBhbnRrYXJ0Lm9yZGVyLm1lZGlhdG9yX2NvbXAgLT4gYW50a2FydC5vcmRlci5nZXRfcXVlcmllcyAiUXVlcmllcyIKICAgICAgICBhbnRrYXJ0Lm9yZGVyLmNyZWF0ZV9jbWQgLT4gYW50a2FydC5vcmRlci51b3cgIkFkZEFzeW5jICsgU2F2ZUNoYW5nZXNBc3luYyIKICAgICAgICBhbnRrYXJ0Lm9yZGVyLnVwZGF0ZV9jbWQgLT4gYW50a2FydC5vcmRlci51b3cgIlVwZGF0ZUFzeW5jICsgU2F2ZUNoYW5nZXNBc3luYyIKICAgICAgICBhbnRrYXJ0Lm9yZGVyLmNhbmNlbF9jbWQgLT4gYW50a2FydC5vcmRlci51b3cgIlVwZGF0ZUFzeW5jICsgU2F2ZUNoYW5nZXNBc3luYyIKICAgICAgICBhbnRrYXJ0Lm9yZGVyLmdldF9xdWVyaWVzIC0+IGFudGthcnQub3JkZXIucmVwbyAiR2V0QnlJZEFzeW5jIMK3IEZpbmRBc3luYyhzcGVjKSIKICAgICAgICBhbnRrYXJ0Lm9yZGVyLnJlcG8gLT4gYW50a2FydC5vcmRlci5kYmN0eCAiRUYgQ29yZSBxdWVyaWVzIgogICAgICAgIGFudGthcnQub3JkZXIudW93IC0+IGFudGthcnQub3JkZXIuZGJjdHggIlNhdmVDaGFuZ2VzQXN5bmMgKyBPdXRib3ggZW5xdWV1ZSIKICAgICAgICBhbnRrYXJ0Lm9yZGVyLmRiY3R4IC0+IGFudGthcnQucGdfb3JkZXJzICJTUUwgdmlhIE5wZ3NxbCIKICAgICAgICBhbnRrYXJ0Lm9yZGVyLmRiY3R4IC0+IHJhYmJpdG1xICJPdXRib3ggcmVsYXkgZm9yd2FyZHMgZXZlbnRzIiAiQU1RUCIKICAgICAgICByYWJiaXRtcSAtPiBhbnRrYXJ0Lm9yZGVyLnNhZ2EgIk9yZGVyQ3JlYXRlZCwgU3RvY2tSZXNlcnZlZCwgU3RvY2tGYWlsZWQiICJBTVFQIgogICAgICAgIGFudGthcnQub3JkZXIuc2FnYSAtPiBhbnRrYXJ0Lm9yZGVyLmRiY3R4ICJSZWFkcy93cml0ZXMgU0FHQSBzdGF0ZSIKICAgICAgICBhbnRrYXJ0Lm9yZGVyLnNhZ2EgLT4gcmFiYml0bXEgIlB1Ymxpc2hlcyBPcmRlckNvbmZpcm1lZC9PcmRlckNhbmNlbGxlZCIgIkFNUVAiCiAgICAgICAgcmFiYml0bXEgLT4gYW50a2FydC5vcmRlci5jb25zdW1lcnMgIlBheW1lbnQgKyBPcmRlciBldmVudHMiICJBTVFQIgogICAgICAgIGFudGthcnQub3JkZXIuY29uc3VtZXJzIC0+IGFudGthcnQub3JkZXIubWVkaWF0b3JfY29tcCAiU2VuZChVcGRhdGVPcmRlclN0YXR1c0NvbW1hbmQpIgogICAgfQoKICAgIHZpZXdzIHsKCiAgICAgICAgLy8gTGV2ZWwgMTogU3lzdGVtIENvbnRleHQKICAgICAgICBzeXN0ZW1Db250ZXh0IGFudGthcnQgIlN5c3RlbUNvbnRleHQiICJMZXZlbCAxIOKAlCBXaG8gdXNlcyBBbnRLYXJ0IGFuZCB3aGF0IGRvZXMgaXQgZGVwZW5kIG9uPyIgewogICAgICAgICAgICBpbmNsdWRlICoKICAgICAgICAgICAgYXV0b0xheW91dAogICAgICAgIH0KCiAgICAgICAgLy8gTGV2ZWwgMjogQ29udGFpbmVyCiAgICAgICAgY29udGFpbmVyIGFudGthcnQgIkNvbnRhaW5lcnMiICJMZXZlbCAyIOKAlCBEZXBsb3lhYmxlIHVuaXRzIGFuZCB0aGVpciBjb21tdW5pY2F0aW9uIiB7CiAgICAgICAgICAgIGluY2x1ZGUgKgogICAgICAgICAgICBhdXRvTGF5b3V0CiAgICAgICAgfQoKICAgICAgICAvLyBMZXZlbCAzOiBDb21wb25lbnQgKEFLLk9yZGVyKQogICAgICAgIGNvbXBvbmVudCBhbnRrYXJ0Lm9yZGVyICJPcmRlckNvbXBvbmVudHMiICJMZXZlbCAzIOKAlCBJbnNpZGUgQUsuT3JkZXI6IENRUlMsIFNBR0EsIE91dGJveCIgewogICAgICAgICAgICBpbmNsdWRlICoKICAgICAgICAgICAgYXV0b0xheW91dAogICAgICAgIH0KCiAgICAgICAgLy8gRHluYW1pYzogT3JkZXIgaGFwcHktcGF0aCBmbG93CiAgICAgICAgZHluYW1pYyBhbnRrYXJ0ICJPcmRlckZsb3ciICJIYXBweS1wYXRoIG9yZGVyIHBsYWNlbWVudDogQ3JlYXRlIOKGkiBTdG9jayDihpIgUGF5bWVudCDihpIgQ29uZmlybSIgewogICAgICAgICAgICBjdXN0b21lciAtPiBhbnRrYXJ0LmdhdGV3YXkgIlBPU1QgL2FwaS9vcmRlcnMgKEpXVCkiCiAgICAgICAgICAgIGFudGthcnQuZ2F0ZXdheSAtPiBhbnRrYXJ0Lm9yZGVyICJSb3V0ZSB0byBBSy5PcmRlciIKICAgICAgICAgICAgYW50a2FydC5vcmRlciAtPiByYWJiaXRtcSAiT3V0Ym94IOKGkiBPcmRlckNyZWF0ZWRJbnRlZ3JhdGlvbkV2ZW50IgogICAgICAgICAgICByYWJiaXRtcSAtPiBhbnRrYXJ0LnByb2R1Y3RzICJPcmRlckNyZWF0ZWQg4oaSIHJlc2VydmUgc3RvY2siCiAgICAgICAgICAgIGFudGthcnQucHJvZHVjdHMgLT4gcmFiYml0bXEgIlN0b2NrUmVzZXJ2ZWRJbnRlZ3JhdGlvbkV2ZW50IgogICAgICAgICAgICByYWJiaXRtcSAtPiBhbnRrYXJ0Lm9yZGVyICJTdG9ja1Jlc2VydmVkIOKGkiBTQUdBIGNvbmZpcm1zIgogICAgICAgICAgICBhbnRrYXJ0Lm9yZGVyIC0+IHJhYmJpdG1xICJPcmRlckNvbmZpcm1lZEludGVncmF0aW9uRXZlbnQiCiAgICAgICAgICAgIHJhYmJpdG1xIC0+IGFudGthcnQubm90aWZpY2F0aW9uICJPcmRlckNvbmZpcm1lZCDihpIgZW1haWwiCiAgICAgICAgICAgIGN1c3RvbWVyIC0+IGFudGthcnQuZ2F0ZXdheSAiUE9TVCAvYXBpL3BheW1lbnRzL2luaXRpYXRlIgogICAgICAgICAgICBhbnRrYXJ0LmdhdGV3YXkgLT4gYW50a2FydC5wYXltZW50cyAiUm91dGUgdG8gQUsuUGF5bWVudHMiCiAgICAgICAgICAgIGFudGthcnQucGF5bWVudHMgLT4gcmF6b3JwYXkgIkNyZWF0ZSBSYXpvcnBheSBvcmRlciIKICAgICAgICAgICAgY3VzdG9tZXIgLT4gYW50a2FydC5nYXRld2F5ICJQT1NUIC9hcGkvcGF5bWVudHMvdmVyaWZ5IgogICAgICAgICAgICBhbnRrYXJ0LmdhdGV3YXkgLT4gYW50a2FydC5wYXltZW50cyAiVmVyaWZ5IEhNQUMgc2lnbmF0dXJlIgogICAgICAgICAgICBhbnRrYXJ0LnBheW1lbnRzIC0+IHJhYmJpdG1xICJQYXltZW50U3VjY2VlZGVkSW50ZWdyYXRpb25FdmVudCIKICAgICAgICAgICAgcmFiYml0bXEgLT4gYW50a2FydC5vcmRlciAiUGF5bWVudFN1Y2NlZWRlZCDihpIgVXBkYXRlU3RhdHVzKFBhaWQpIgogICAgICAgICAgICByYWJiaXRtcSAtPiBhbnRrYXJ0Lm5vdGlmaWNhdGlvbiAiUGF5bWVudFN1Y2NlZWRlZCDihpIgcmVjZWlwdCBlbWFpbCIKICAgICAgICAgICAgYXV0b0xheW91dAogICAgICAgIH0KCiAgICAgICAgLy8g4pSA4pSAIFN0eWxpbmcg4pSA4pSACiAgICAgICAgc3R5bGVzIHsKICAgICAgICAgICAgZWxlbWVudCAiUGVyc29uIiB7CiAgICAgICAgICAgICAgICBzaGFwZSBQZXJzb24KICAgICAgICAgICAgICAgIGJhY2tncm91bmQgIzA4NDI3QgogICAgICAgICAgICAgICAgY29sb3IgI2ZmZmZmZgogICAgICAgICAgICB9CiAgICAgICAgICAgIGVsZW1lbnQgIlNvZnR3YXJlIFN5c3RlbSIgewogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjMTE2OEJECiAgICAgICAgICAgICAgICBjb2xvciAjZmZmZmZmCiAgICAgICAgICAgIH0KICAgICAgICAgICAgZWxlbWVudCAiRXh0ZXJuYWwiIHsKICAgICAgICAgICAgICAgIGJhY2tncm91bmQgIzk5OTk5OQogICAgICAgICAgICAgICAgY29sb3IgI2ZmZmZmZgogICAgICAgICAgICB9CiAgICAgICAgICAgIGVsZW1lbnQgIlNlcnZpY2UiIHsKICAgICAgICAgICAgICAgIGJhY2tncm91bmQgIzQzOERENQogICAgICAgICAgICAgICAgY29sb3IgI2ZmZmZmZgogICAgICAgICAgICB9CiAgICAgICAgICAgIGVsZW1lbnQgIkRhdGFiYXNlIiB7CiAgICAgICAgICAgICAgICBzaGFwZSBDeWxpbmRlcgogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjODVCQkYwCiAgICAgICAgICAgICAgICBjb2xvciAjMDAwMDAwCiAgICAgICAgICAgIH0KICAgICAgICAgICAgZWxlbWVudCAiQ29tcG9uZW50IiB7CiAgICAgICAgICAgICAgICBiYWNrZ3JvdW5kICM4NUJCRjAKICAgICAgICAgICAgICAgIGNvbG9yICMwMDAwMDAKICAgICAgICAgICAgfQogICAgICAgICAgICByZWxhdGlvbnNoaXAgIlJlbGF0aW9uc2hpcCIgewogICAgICAgICAgICAgICAgZGFzaGVkIGZhbHNlCiAgICAgICAgICAgIH0KICAgICAgICB9CiAgICB9Cgp9",
+    "structurizr.inspection.info" : "0",
+    "structurizr.inspection.ignore" : "0",
+    "structurizr.inspection.warning" : "0"
+  },
+  "views" : {
+    "componentViews" : [ {
+      "automaticLayout" : {
+        "edgeSeparation" : 50,
+        "nodeSeparation" : 50,
+        "rankDirection" : "LeftRight",
+        "rankSeparation" : 100,
+        "vertices" : true
+      },
+      "containerId" : "14",
+      "description" : "Level 3 — Inside AK.Order: CQRS, SAGA, Outbox",
+      "elements" : [ {
+        "id" : "7",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "9",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "15",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "16",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "17",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "18",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "19",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "20",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "21",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "22",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "23",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "24",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "25",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "26",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "27",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "33",
+        "x" : 0,
+        "y" : 0
+      } ],
+      "externalContainerBoundariesVisible" : false,
+      "key" : "OrderComponents",
+      "name" : "Component View: AntKart Platform - AK.Order",
+      "order" : 3,
+      "relationships" : [ {
+        "id" : "69"
+      }, {
+        "id" : "70"
+      }, {
+        "id" : "71"
+      }, {
+        "id" : "72"
+      }, {
+        "id" : "73"
+      }, {
+        "id" : "74"
+      }, {
+        "id" : "75"
+      }, {
+        "id" : "76"
+      }, {
+        "id" : "77"
+      }, {
+        "id" : "78"
+      }, {
+        "id" : "79"
+      }, {
+        "id" : "80"
+      }, {
+        "id" : "81"
+      }, {
+        "id" : "82"
+      }, {
+        "id" : "83"
+      }, {
+        "id" : "84"
+      }, {
+        "id" : "85"
+      }, {
+        "id" : "86"
+      }, {
+        "id" : "87"
+      }, {
+        "id" : "88"
+      } ]
+    } ],
+    "configuration" : {
+      "styles" : {
+        "elements" : [ {
+          "background" : "#85bbf0",
+          "color" : "#000000",
+          "tag" : "Component"
+        }, {
+          "background" : "#85bbf0",
+          "color" : "#000000",
+          "shape" : "Cylinder",
+          "tag" : "Database"
+        }, {
+          "background" : "#999999",
+          "color" : "#ffffff",
+          "tag" : "External"
+        }, {
+          "background" : "#08427b",
+          "color" : "#ffffff",
+          "shape" : "Person",
+          "tag" : "Person"
+        }, {
+          "background" : "#438dd5",
+          "color" : "#ffffff",
+          "tag" : "Service"
+        }, {
+          "background" : "#1168bd",
+          "color" : "#ffffff",
+          "tag" : "Software System"
+        } ],
+        "relationships" : [ {
+          "dashed" : false,
+          "tag" : "Relationship"
+        } ]
+      },
+      "terminology" : { }
+    },
+    "containerViews" : [ {
+      "automaticLayout" : {
+        "edgeSeparation" : 50,
+        "nodeSeparation" : 50,
+        "rankDirection" : "LeftRight",
+        "rankSeparation" : 100,
+        "vertices" : true
+      },
+      "description" : "Level 2 — Deployable units and their communication",
+      "elements" : [ {
+        "id" : "1",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "2",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "3",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "4",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "5",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "7",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "9",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "10",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "11",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "12",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "13",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "14",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "28",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "29",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "30",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "31",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "32",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "33",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "34",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "35",
+        "x" : 0,
+        "y" : 0
+      } ],
+      "externalSoftwareSystemBoundariesVisible" : false,
+      "key" : "Containers",
+      "name" : "Container View: AntKart Platform",
+      "order" : 2,
+      "relationships" : [ {
+        "id" : "43"
+      }, {
+        "id" : "44"
+      }, {
+        "id" : "45"
+      }, {
+        "id" : "46"
+      }, {
+        "id" : "47"
+      }, {
+        "id" : "48"
+      }, {
+        "id" : "49"
+      }, {
+        "id" : "50"
+      }, {
+        "id" : "51"
+      }, {
+        "id" : "52"
+      }, {
+        "id" : "53"
+      }, {
+        "id" : "54"
+      }, {
+        "id" : "55"
+      }, {
+        "id" : "56"
+      }, {
+        "id" : "57"
+      }, {
+        "id" : "58"
+      }, {
+        "id" : "59"
+      }, {
+        "id" : "60"
+      }, {
+        "id" : "61"
+      }, {
+        "id" : "62"
+      }, {
+        "id" : "63"
+      }, {
+        "id" : "64"
+      }, {
+        "id" : "65"
+      }, {
+        "id" : "67"
+      }, {
+        "id" : "68"
+      } ],
+      "softwareSystemId" : "8"
+    } ],
+    "dynamicViews" : [ {
+      "automaticLayout" : {
+        "edgeSeparation" : 50,
+        "nodeSeparation" : 50,
+        "rankDirection" : "LeftRight",
+        "rankSeparation" : 100,
+        "vertices" : true
+      },
+      "description" : "Happy-path order placement: Create → Stock → Payment → Confirm",
+      "elementId" : "8",
+      "elements" : [ {
+        "id" : "1",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "4",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "7",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "9",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "11",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "14",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "28",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "29",
+        "x" : 0,
+        "y" : 0
+      } ],
+      "externalBoundariesVisible" : false,
+      "key" : "OrderFlow",
+      "name" : "Dynamic View: AntKart Platform",
+      "order" : 4,
+      "relationships" : [ {
+        "description" : "POST /api/orders (JWT)",
+        "id" : "43",
+        "order" : "1",
+        "response" : false
+      }, {
+        "description" : "Route to AK.Order",
+        "id" : "48",
+        "order" : "2",
+        "response" : false
+      }, {
+        "description" : "Outbox → OrderCreatedIntegrationEvent",
+        "id" : "62",
+        "order" : "3",
+        "response" : false
+      }, {
+        "description" : "OrderCreated → reserve stock",
+        "id" : "65",
+        "order" : "4",
+        "response" : false
+      }, {
+        "description" : "StockReservedIntegrationEvent",
+        "id" : "65",
+        "order" : "5",
+        "response" : true
+      }, {
+        "description" : "StockReserved → SAGA confirms",
+        "id" : "67",
+        "order" : "6",
+        "response" : false
+      }, {
+        "description" : "OrderConfirmedIntegrationEvent",
+        "id" : "62",
+        "order" : "7",
+        "response" : false
+      }, {
+        "description" : "OrderConfirmed → email",
+        "id" : "68",
+        "order" : "8",
+        "response" : false
+      }, {
+        "description" : "POST /api/payments/initiate",
+        "id" : "43",
+        "order" : "9",
+        "response" : false
+      }, {
+        "description" : "Route to AK.Payments",
+        "id" : "49",
+        "order" : "10",
+        "response" : false
+      }, {
+        "description" : "Create Razorpay order",
+        "id" : "60",
+        "order" : "11",
+        "response" : false
+      }, {
+        "description" : "POST /api/payments/verify",
+        "id" : "43",
+        "order" : "12",
+        "response" : false
+      }, {
+        "description" : "Verify HMAC signature",
+        "id" : "49",
+        "order" : "13",
+        "response" : false
+      }, {
+        "description" : "PaymentSucceededIntegrationEvent",
+        "id" : "63",
+        "order" : "14",
+        "response" : false
+      }, {
+        "description" : "PaymentSucceeded → UpdateStatus(Paid)",
+        "id" : "67",
+        "order" : "15",
+        "response" : false
+      }, {
+        "description" : "PaymentSucceeded → receipt email",
+        "id" : "68",
+        "order" : "16",
+        "response" : false
+      } ]
+    } ],
+    "systemContextViews" : [ {
+      "automaticLayout" : {
+        "edgeSeparation" : 50,
+        "nodeSeparation" : 50,
+        "rankDirection" : "LeftRight",
+        "rankSeparation" : 100,
+        "vertices" : true
+      },
+      "description" : "Level 1 — Who uses AntKart and what does it depend on?",
+      "elements" : [ {
+        "id" : "1",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "2",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "3",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "4",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "5",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "6",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "7",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "8",
+        "x" : 0,
+        "y" : 0
+      } ],
+      "enterpriseBoundaryVisible" : true,
+      "key" : "SystemContext",
+      "name" : "System Context View: AntKart Platform",
+      "order" : 1,
+      "relationships" : [ {
+        "id" : "36"
+      }, {
+        "id" : "37"
+      }, {
+        "id" : "38"
+      }, {
+        "id" : "39"
+      }, {
+        "id" : "40"
+      }, {
+        "id" : "41"
+      }, {
+        "id" : "42"
+      }, {
+        "id" : "66"
+      } ],
+      "softwareSystemId" : "8"
+    } ]
+  }
+}
