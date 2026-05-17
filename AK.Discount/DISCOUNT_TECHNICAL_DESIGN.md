@@ -390,9 +390,17 @@ For each SKU (e.g. `MEN-SHIR-001`):
 
 ```csharp
 builder.Services.AddGrpc(opts => opts.Interceptors.Add<ExceptionInterceptor>());
+if (builder.Environment.IsDevelopment())
+    builder.Services.AddGrpcReflection();   // enables grpcui / grpcurl without passing a proto file
 builder.Services.AddApplication();
 builder.Services.AddDiscountInfrastructure(configuration);
 builder.Services.AddDefaultHealthChecks();
+
+// ...
+
+app.MapGrpcService<DiscountService>();
+if (app.Environment.IsDevelopment())
+    app.MapGrpcReflectionService();         // Development only — not exposed in Docker (Production)
 ```
 
 ### 10.2 DiscountService — RPC Method Mapping
@@ -542,30 +550,147 @@ service DiscountProtoService {
 
 ### Testing the gRPC Service
 
-Use [grpcurl](https://github.com/fullstorydev/grpcurl) or Postman gRPC:
+#### RPC Authorization Matrix
+
+| RPC | Auth required |
+|-----|--------------|
+| `GetDiscount` | None — anonymous |
+| `GetAllDiscounts` | None — anonymous |
+| `CreateDiscount` | `admin` JWT in `authorization` header |
+| `UpdateDiscount` | `admin` JWT in `authorization` header |
+| `DeleteDiscount` | `admin` JWT in `authorization` header |
+
+Write RPCs are guarded by `AuthInterceptor` — it reads the `realm_access.roles` claim from the JWT and returns `PermissionDenied` if `admin` is absent.
+
+---
+
+#### Step 0 — Get an admin JWT (required for write operations)
 
 ```bash
-# List all discounts
-grpcurl -plaintext -d '{"page":1,"page_size":10}' localhost:5001 discount.DiscountProtoService/GetAllDiscounts
-
-# Get discount for a product
-grpcurl -plaintext -d '{"product_id":"MEN-SHIR-001"}' localhost:5001 discount.DiscountProtoService/GetDiscount
-
-# Create a discount
-grpcurl -plaintext -d '{
-  "coupon": {
-    "product_id": "MEN-SHIR-099",
-    "product_name": "Test Shirt",
-    "coupon_code": "SUMMER25",
-    "description": "Summer sale 25% off",
-    "amount": 25.0,
-    "discount_type": "Percentage",
-    "valid_from": "2026-04-01T00:00:00Z",
-    "valid_to": "2026-08-31T23:59:59Z",
-    "minimum_quantity": 1
-  }
-}' localhost:5001 discount.DiscountProtoService/CreateDiscount
+# Login as admin user (stack must be running)
+curl -s -X POST http://localhost:8084/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"admin","password":"admin123"}' \
+  | grep -o '"accessToken":"[^"]*"'
 ```
+
+Copy the token value. Use it as `<ADMIN_TOKEN>` in the write examples below.
+
+---
+
+#### Option A — grpcui (browser form, recommended)
+
+Server reflection is enabled in `Development` environment — no proto file needed.
+
+**Install:**
+```bash
+go install github.com/fullstorydev/grpcui/cmd/grpcui@latest
+```
+
+**Run:**
+```bash
+# Dev (dotnet run — ASPNETCORE_ENVIRONMENT=Development)
+grpcui -plaintext localhost:5001
+
+# Docker (ASPNETCORE_ENVIRONMENT=Production — reflection OFF; pass proto file instead)
+grpcui -plaintext -proto AK.Discount/AK.Discount.Grpc/Protos/discount.proto localhost:8081
+```
+
+grpcui opens a browser tab at `http://127.0.0.1:<random-port>` with:
+- A dropdown of all 5 RPC methods
+- Auto-generated form fields for the request message
+- A **Request Metadata** section — add key `authorization`, value `Bearer <ADMIN_TOKEN>` for write RPCs
+- Response panel showing the JSON reply
+
+---
+
+#### Option B — Postman (recommended for everyday use)
+
+1. Open Postman → **New → gRPC**
+2. Enter server URL: `localhost:5001` (dev) or `localhost:8081` (Docker) — no `http://`
+3. Click **Import a .proto file** → select `AK.Discount/AK.Discount.Grpc/Protos/discount.proto`
+4. From the method dropdown select the RPC to test
+5. For write RPCs: click **Metadata** tab → add `authorization` → `Bearer <ADMIN_TOKEN>`
+6. Fill the **Message** tab with the request JSON → click **Invoke**
+
+---
+
+#### Option C — grpcurl (command line)
+
+Install: https://github.com/fullstorydev/grpcurl/releases
+
+```bash
+# ── READ OPERATIONS (no auth needed) ──────────────────────────────────────
+
+# Get discount for a specific product SKU
+grpcurl -plaintext \
+  -d '{"product_id":"MEN-SHIR-001"}' \
+  localhost:5001 discount.DiscountProtoService/GetDiscount
+
+# List all discounts (page 1, 10 per page)
+grpcurl -plaintext \
+  -d '{"page":1,"page_size":10}' \
+  localhost:5001 discount.DiscountProtoService/GetAllDiscounts
+
+# ── WRITE OPERATIONS (admin JWT required) ─────────────────────────────────
+
+# Create a new discount
+grpcurl -plaintext \
+  -H "authorization: Bearer <ADMIN_TOKEN>" \
+  -d '{
+    "coupon": {
+      "product_id": "MEN-SHIR-099",
+      "product_name": "Test Shirt",
+      "coupon_code": "SUMMER25",
+      "description": "Summer sale 25% off",
+      "amount": 25.0,
+      "discount_type": "Percentage",
+      "valid_from": "2026-04-01T00:00:00Z",
+      "valid_to": "2026-08-31T23:59:59Z",
+      "minimum_quantity": 1
+    }
+  }' \
+  localhost:5001 discount.DiscountProtoService/CreateDiscount
+
+# Update an existing discount (id from GetAllDiscounts response)
+grpcurl -plaintext \
+  -H "authorization: Bearer <ADMIN_TOKEN>" \
+  -d '{
+    "id": 1,
+    "coupon": {
+      "amount": 30.0,
+      "discount_type": "Percentage",
+      "is_active": true,
+      "valid_from": "2026-04-01T00:00:00Z",
+      "valid_to": "2026-12-31T23:59:59Z",
+      "minimum_quantity": 1
+    }
+  }' \
+  localhost:5001 discount.DiscountProtoService/UpdateDiscount
+
+# Delete a discount by id
+grpcurl -plaintext \
+  -H "authorization: Bearer <ADMIN_TOKEN>" \
+  -d '{"id":1}' \
+  localhost:5001 discount.DiscountProtoService/DeleteDiscount
+
+# List all available RPC methods (requires reflection — Development only)
+grpcurl -plaintext localhost:5001 list
+grpcurl -plaintext localhost:5001 list discount.DiscountProtoService
+```
+
+---
+
+#### Common errors
+
+| Error | Cause | Fix |
+|-------|-------|-----|
+| `Failed to dial target host` | Service not running | `dotnet run` or `docker-compose up` |
+| `server does not support the reflection API` | Running in Production (Docker) | Pass `-proto` flag or use Postman with proto file |
+| `Unauthenticated: Missing or invalid authorization header` | No Bearer token on write RPC | Add `-H "authorization: Bearer <token>"` |
+| `PermissionDenied: Admin role required` | Token doesn't have `admin` role | Log in as `admin` / `admin2` user |
+| `NotFound` | Product SKU has no active coupon | Check `is_active = true` in DB; use `GetAllDiscounts` to browse |
+| `AlreadyExists` | Duplicate `coupon_code` | Use a unique `coupon_code` value |
 
 ---
 
@@ -743,7 +868,7 @@ docker-compose down -v
 
 | Decision | Choice | Rationale | Trade-off |
 |----------|--------|-----------|-----------|
-| **Transport** | gRPC (not REST) | Binary protocol, strongly typed contract, ideal for internal service-to-service calls | Not browser-callable without gRPC-Web proxy; requires Protobuf tooling |
+| **Transport** | gRPC (not REST) | Binary protocol, strongly typed contract, ideal for internal service-to-service calls | Not browser-callable directly; use grpcui (browser form via reflection) or Postman gRPC tab for manual testing |
 | **Database** | SQLite | Zero infrastructure footprint, file-based, adequate for discount catalogue volume | Not suitable for high-concurrency writes; single-writer limitation |
 | **ORM** | EF Core (code-first) | Auto migrations, LINQ queries, type safety | Slight overhead vs raw SQL; migration management needed |
 | **Architecture** | Clean Architecture (lighter than full DDD) | Discounts are CRUD-oriented; full DDD with aggregates/domain events would be over-engineered | Less structure than AK.Products — appropriate given simpler domain |
