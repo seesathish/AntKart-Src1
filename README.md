@@ -29,12 +29,13 @@ graph LR
         ORD[📋 Order\n· 8083]:::api
         PAY[💳 Payments\n· 8085]:::api
         DISC[🏷️ Discount gRPC\n· 8081]:::api
+        NOTIF[📧 Notification\n· 8086]:::api
     end
 
     subgraph Data Stores
         MONGO[(🍃 MongoDB\nProducts)]:::db
         REDIS[(⚡ Redis\nCart)]:::db
-        PG[(🐘 PostgreSQL\nOrders + Payments)]:::db
+        PG[(🐘 PostgreSQL\nOrders · Payments\nNotifications)]:::db
         SQLITE[(📄 SQLite\nDiscounts)]:::db
     end
 
@@ -43,12 +44,13 @@ graph LR
         MQ[🐰 RabbitMQ\n· 5672]:::infra
         ES[(🔍 Elasticsearch\n· 9200)]:::infra
         KIB[📊 Kibana\n· 5601]:::infra
+        MAILHOG[📬 Mailhog\n· 8025]:::infra
     end
 
     RZP[💳 Razorpay\nSandbox]:::external
 
     CLIENT --> GW
-    GW --> UI & PRD & CART & ORD & PAY
+    GW --> UI & PRD & CART & ORD & PAY & NOTIF
     GW -. JWT .-> KC
 
     PRD --> MONGO & DISC
@@ -58,17 +60,21 @@ graph LR
     PAY --> PG
     PAY --> RZP
     UI --> KC
+    NOTIF --> PG
+    NOTIF --> MAILHOG
 
     ORD <--> MQ
     PRD <--> MQ
     CART <--> MQ
     PAY <--> MQ
+    UI --> MQ
+    NOTIF --> MQ
 
-    UI & PRD & CART & ORD & PAY --> ES
+    UI & PRD & CART & ORD & PAY & NOTIF --> ES
     ES --> KIB
 ```
 
-### Diagram 2 — Order + Payment Event Flow (SAGA)
+### Diagram 2 — Order + Payment Event Flow (SAGA + Notifications)
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#888888', 'edgeLabelBackground': '#00000000'}}}%%
@@ -77,6 +83,7 @@ flowchart TD
     classDef service fill:#2ECC71,stroke:#1E8449,color:#fff
     classDef saga fill:#E67E22,stroke:#D35400,color:#fff,font-weight:bold
     classDef decision fill:#E74C3C,stroke:#C0392B,color:#fff
+    classDef notif fill:#8E44AD,stroke:#6C3483,color:#fff
 
     A([🛍️ Client places order]):::service
     B[📋 AK.Order\nPOST /api/orders]:::service
@@ -96,21 +103,30 @@ flowchart TD
     P[📋 Order → Paid]:::service
     Q[📋 Order → PaymentFailed]:::service
 
+    N1[📧 Notification\n✉ Order Confirmation]:::notif
+    N2[📧 Notification\n✉ Order Confirmed]:::notif
+    N3[📧 Notification\n✉ Order Cancelled]:::notif
+    N4[📧 Notification\n✉ Payment Receipt]:::notif
+    N5[📧 Notification\n✉ Payment Failed]:::notif
+
     A --> B --> C --> D
+    C --> N1
     D --> E --> F
     F -- Yes --> G --> D --> I
     F -- No --> H --> D --> J
-    I --> K & L
+    I --> K & L & N2
+    J --> N3
     K --> M
-    M -- Yes --> N --> P
-    M -- No --> O --> Q
+    M -- Yes --> N --> P & N4
+    M -- No --> O --> Q & N5
 ```
 
 ### Architecture Highlights
 
 - **Clean Architecture + DDD per service** — each microservice has Domain, Application, Infrastructure, and API layers with strict inward dependency rules; domain entities use private setters and factory methods with no framework leakage.
 - **CQRS via MediatR 12 in every service** — commands and queries are fully separated; a `ValidationBehavior<TRequest, TResponse>` pipeline ensures all requests are validated by FluentValidation before reaching handlers.
-- **MassTransit SAGA orchestrates order → stock → payment** — the `OrderSaga` in AK.Order transitions through `Initial → StockPending → Confirmed/Cancelled` states, coordinating AK.Products, AK.ShoppingCart, and AK.Payments over RabbitMQ without any direct service-to-service HTTP calls.
+- **MassTransit SAGA orchestrates order → stock → payment → notification** — the `OrderSaga` in AK.Order transitions through `Initial → StockPending → Confirmed/Cancelled` states, coordinating AK.Products, AK.ShoppingCart, AK.Payments, and AK.Notification over RabbitMQ without any direct service-to-service HTTP calls.
+- **AK.Notification is fully event-driven** — consumes six integration events (`UserRegistered`, `OrderCreated`, `OrderConfirmed`, `OrderCancelled`, `PaymentSucceeded`, `PaymentFailed`) and dispatches transactional emails via MailKit. Local dev uses Mailhog (`http://localhost:8025`) as an SMTP trap; production uses Gmail SMTP with an App Password via `docker-compose.gmail.yml`.
 - **EF Core Outbox pattern in Order and Payments** — integration events are written atomically to the same PostgreSQL transaction as the business data, guaranteeing at-least-once delivery and preventing dual-write inconsistencies.
 - **JWT authentication via Keycloak, validated at Gateway and per-service** — Ocelot validates the Bearer token at the gateway edge; each downstream service independently re-validates via the Keycloak OIDC discovery endpoint, so a compromised gateway cannot bypass service-level auth.
 - **Polly v8 resilience (retry + circuit breaker) on all outbound calls** — `AddHttpResilienceWithCircuitBreaker()`, `AddRedisResilience()`, and `AddNpgsqlResilience()` from AK.BuildingBlocks wrap every external dependency with exponential backoff retry and a half-open circuit breaker.
@@ -175,9 +191,11 @@ AntKart/
 | Service | GET / Read | Write / Mutation |
 |---------|-----------|-----------------|
 | AK.Products | Anonymous | Admin only |
-| AK.Discount (gRPC) | Anonymous | Admin only |
+| AK.Discount (gRPC) | Anonymous | Admin only (JWT in `authorization` metadata) |
 | AK.ShoppingCart | Authenticated | Authenticated |
-| AK.Order | Authenticated | Authenticated |
+| AK.Order | Authenticated (`/me` = own orders) | Authenticated; status update = Admin only |
+| AK.Payments | Authenticated (`/me` = own payments) | Authenticated |
+| AK.Notification | Authenticated (`/` = own notifications; `/admin` = Admin only) | Event-driven only — no write endpoints |
 | AK.UserIdentity | `/login`, `/register`, `/refresh` anonymous | `/me` authenticated; `/admin/*` admin only |
 | AK.Gateway | Proxied from downstream | JWT validated at gateway + downstream |
 
@@ -206,7 +224,7 @@ docker-compose up --build
 | AK.Order Swagger | http://localhost:8083/swagger (Development only) |
 | AK.UserIdentity Swagger | http://localhost:8084/swagger (Development only) |
 | AK.Payments Swagger | http://localhost:8085/swagger (Development only) |
-| AK.Notification Swagger | http://localhost:5087/swagger (Development only) |
+| AK.Notification Swagger | http://localhost:8086/swagger (Development only) |
 | **Mailhog Web UI** | **http://localhost:8025** (captured emails) |
 
 > **Keycloak auto-import:** The `antkart` realm is imported from `keycloak/antkart-realm.json` on first start. Pre-seeded users: `admin/admin123` (admin+user), `user1/user123` (user), `admin2/Admin2Pass!` (admin+user).
