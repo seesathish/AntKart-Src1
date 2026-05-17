@@ -23,20 +23,18 @@ internal static class ProductClassMap
 
             BsonClassMap.RegisterClassMap<StringEntity>(cm =>
             {
-                cm.AutoMap();  // Automatically maps all public properties.
-                // SetIgnoreExtraElements: if a MongoDB document has a field that doesn't
-                // exist on the class (e.g. from an older schema version), ignore it instead of throwing.
+                cm.AutoMap();
                 cm.SetIgnoreExtraElements(true);
+                // DomainEvents is an in-memory list used for event dispatch — it must NOT be
+                // serialised to MongoDB. Unmapped here because the property is declared on StringEntity,
+                // not on Product; UnmapProperty requires the declaring type to match the class map.
+                cm.UnmapProperty(e => e.DomainEvents);
             });
 
             BsonClassMap.RegisterClassMap<Product>(cm =>
             {
                 cm.AutoMap();
                 cm.SetIgnoreExtraElements(true);
-
-                // DomainEvents is an in-memory list used for event dispatch — it must NOT be
-                // serialised to MongoDB. Unmapping it prevents MongoDB from trying to store it.
-                cm.UnmapProperty(p => p.DomainEvents);
             });
 
             _registered = true;
