@@ -10,6 +10,7 @@ AK.Notification is an event-driven microservice that sends transactional notific
 - **Email (production):** SMTP via `antkartadmin@gmail.com` (Gmail app password required)
 - **Trigger mechanism:** MassTransit consumers on RabbitMQ — no polling, fully event-driven
 - **Retention policy:** Notifications auto-deleted after 90 days by a background cleanup service
+- **Patterns:** CQRS (MediatR 12.4.1), FluentValidation, MassTransit consumers, channel abstraction — see [ADR-007](../docs/adr/ADR-007-CQRS-and-MediatR.md)
 
 ---
 

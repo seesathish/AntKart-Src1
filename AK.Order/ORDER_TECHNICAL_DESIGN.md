@@ -32,7 +32,7 @@
 | Database | PostgreSQL 16 (`AKOrdersDb`) |
 | EF Core | 9.0.4 via Npgsql |
 | Architecture | Vertical Slice Clean Architecture |
-| Patterns | CQRS (MediatR 12.4.1), FluentValidation, Specification, Repository, Unit of Work |
+| Patterns | CQRS (MediatR 12.4.1), FluentValidation, Specification, Repository, Unit of Work — see [ADR-007](../docs/adr/ADR-007-CQRS-and-MediatR.md), [ADR-008](../docs/adr/ADR-008-Repository-Specification-and-Unit-of-Work.md) |
 
 ---
 

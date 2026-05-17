@@ -33,6 +33,13 @@
 | Pattern Stack   | CQRS, MediatR, FluentValidation, Unit of Work |
 | Namespace root  | `AK.ShoppingCart`                      |
 
+### Related Architecture Decision Records
+
+| ADR | Decision |
+|-----|----------|
+| [ADR-007 — CQRS and MediatR](../docs/adr/ADR-007-CQRS-and-MediatR.md) | Why all commands and queries are dispatched via MediatR; pipeline behaviour for validation |
+| [ADR-008 — Repository, Specification, and Unit of Work](../docs/adr/ADR-008-Repository-Specification-and-Unit-of-Work.md) | `ICartRepository` and `IUnitOfWork` — single Redis transaction boundary per cart operation |
+
 ---
 
 ## 2. Functional Requirements
